@@ -2,9 +2,9 @@
 
 public class FileSystem
 {
-	public String Size { get; set; }
-	public String Used { get; set; }
-	public String Available { get; set; }
-	public String PercentageUsed { get; set; }
-	public String Volume { get; set; }
+	public string Size { get; set; }
+	public string Used { get; set; }
+	public string Available { get; set; }
+	public string PercentageUsed { get; set; }
+	public string Volume { get; set; }
 }

@@ -27,3 +27,4 @@ C:\Users\Quentin\RiderProjects\Europium\Europium\obj\Debug\net6.0\Europium.pdb
 C:\Users\Quentin\RiderProjects\Europium\Europium\obj\Debug\net6.0\Europium.genruntimeconfig.cache
 C:\Users\Quentin\RiderProjects\Europium\Europium\bin\Debug\net6.0\Renci.SshNet.dll
 C:\Users\Quentin\RiderProjects\Europium\Europium\bin\Debug\net6.0\SshNet.Security.Cryptography.dll
+C:\Users\Quentin\RiderProjects\Europium\Europium\bin\Debug\net6.0\appconfig.json

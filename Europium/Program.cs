@@ -20,7 +20,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<AppConfig>(builder.Configuration);
+
 var app = builder.Build();
+
+builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+{
+	config.AddJsonFile("appconfig.json",
+		optional: false,
+		reloadOnChange: false);
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
