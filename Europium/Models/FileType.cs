@@ -2,5 +2,5 @@
 
 public enum FileType
 {
-	File, Folder, All
+	None, File, Folder, All
 }
