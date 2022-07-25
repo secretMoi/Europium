@@ -24,7 +24,7 @@ public class StorageController : ControllerBase
 		return Ok(await listVolumesService.GetFileSystemsAsync());
 	}
 	
-	[HttpGet("files")]
+	[HttpPost("files")]
 	public async Task<IActionResult> GetFilesFromPath([FromBody]ListFilesArguments listFilesArguments)
 	{
 		var listFilesService = new ListFilesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
