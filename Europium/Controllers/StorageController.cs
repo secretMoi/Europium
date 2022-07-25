@@ -2,7 +2,6 @@
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using File = Europium.Models.File;
 
 namespace Europium.Controllers;
 
