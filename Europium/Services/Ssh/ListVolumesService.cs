@@ -1,13 +1,27 @@
-﻿namespace Europium;
+﻿using Europium.Models;
 
-internal class ParseCommandDf
+namespace Europium.Services.Ssh;
+
+internal class ListVolumesService : SSHService
 {
 	private enum Colonnes
 	{
 		Total = 1, Utilise = 2, Libre = 3, Utilisation = 4, Nom = 5
 	}
+	
+	public ListVolumesService(string host, string user, string password, int port = 22) : base(host, user, password, port)
+	{
+	}
 
-	public List<FileSystem> Parse(string retourCommandeBrut)
+	public async Task<List<FileSystem>> GetFileSystemsAsync()
+	{
+		await ConnectAsync();
+		var result = await RunCommandAsync("df -h");
+		
+		return ParseSshResponse(result);
+	}
+
+	private List<FileSystem> ParseSshResponse(string retourCommandeBrut)
 	{
 		var lines = retourCommandeBrut.Split('\n').SkipLast(1).Skip(1); // casse la chaine en lignes
 
@@ -17,14 +31,13 @@ internal class ParseCommandDf
 	private FileSystem ParseBySpace(string ligne)
 	{
 		int compteurColonne = 0; // renvoie le n° de la colonne actuel
-		int idColonne; // permet d'identifier la colonne
 
 		var fileSystem = new FileSystem();
 
 		// split en colonne par espace
 		foreach (string item in ligne.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries))
 		{
-			idColonne = compteurColonne % 6;
+			var idColonne = compteurColonne % 6; // permet d'identifier la colonne
 
 			if (ValidColumn(idColonne, Colonnes.Total))
 			{
@@ -59,7 +72,7 @@ internal class ParseCommandDf
 		return id == (int) colonne;
 	}
 
-	public static string CleanName(string name)
+	private static string CleanName(string name)
     {
         name = name.Substring(1);
 

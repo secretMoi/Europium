@@ -1,4 +1,4 @@
-using Europium;
+using Europium.Models;
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +8,7 @@ builder.Services.AddCors(options =>
 	options.AddPolicy(name: MyAllowSpecificOrigins,
 		policy  =>
 		{
-			policy.WithOrigins("http://localhost:4200",
-				"https://localhost:4200");
+			policy.WithOrigins("http://localhost:4200", "https://localhost:4200");
 		});
 });
 
@@ -24,7 +23,7 @@ builder.Services.Configure<AppConfig>(builder.Configuration);
 
 var app = builder.Build();
 
-builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+builder.Host.ConfigureAppConfiguration((_, config) =>
 {
 	config.AddJsonFile("appconfig.json",
 		optional: false,

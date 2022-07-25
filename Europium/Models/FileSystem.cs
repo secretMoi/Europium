@@ -1,4 +1,4 @@
-﻿namespace Europium;
+﻿namespace Europium.Models;
 
 public class FileSystem
 {

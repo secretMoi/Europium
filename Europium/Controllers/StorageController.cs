@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Europium.Models;
+using Europium.Services.Ssh;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using File = Europium.Models.File;
 
 namespace Europium.Controllers;
 
@@ -14,22 +17,19 @@ public class StorageController : ControllerBase
 		AppConfig = optionsSnapshot.Value;
 	}
 	
-	[HttpGet]
-	public async Task<List<FileSystem>> Get2()
+	[HttpGet("filesystems")]
+	public async Task<IActionResult> GetFileSystems()
 	{
-		var Ssh = new SSH(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
-		await Ssh.ConnectAsync();
-		var result = await Ssh.RunCommandAsync("df -h");
-		return GereEspace(result);
+		var listVolumesService = new ListVolumesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
+
+		return Ok(await listVolumesService.GetFileSystemsAsync());
 	}
-
-	private List<FileSystem> GereEspace(string result)
+	
+	[HttpGet("files")]
+	public async Task<IActionResult> GetFilesFromPath([FromBody]ListFilesArguments listFilesArguments)
 	{
-		
-		var parseCommandDf = new ParseCommandDf();
-		
-		var fileSystems = parseCommandDf.Parse(result);
+		var listFilesService = new ListFilesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
 
-		return fileSystems;
+		return Ok(await listFilesService.GetFiles(listFilesArguments));
 	}
 }
