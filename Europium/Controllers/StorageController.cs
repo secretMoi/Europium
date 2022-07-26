@@ -21,14 +21,28 @@ public class StorageController : ControllerBase
 	{
 		var listVolumesService = new ListVolumesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
 
-		return Ok(await listVolumesService.GetFileSystemsAsync());
+		var volumes = await listVolumesService.GetFileSystemsAsync();
+
+		if (volumes.Count == 0)
+		{
+			return NotFound();
+		}
+
+		return Ok(volumes);
 	}
 	
 	[HttpPost("files")]
 	public async Task<IActionResult> GetFilesFromPath([FromBody]ListFilesArguments listFilesArguments)
 	{
 		var listFilesService = new ListFilesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
+		
+		var files = await listFilesService.GetFiles(listFilesArguments);
+		
+		if (files.Count == 0)
+		{
+			return NotFound();
+		}
 
-		return Ok(await listFilesService.GetFiles(listFilesArguments));
+		return Ok(files);
 	}
 }

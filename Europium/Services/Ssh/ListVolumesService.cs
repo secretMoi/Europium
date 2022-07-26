@@ -8,7 +8,7 @@ internal class ListVolumesService : SSHService
 	{
 		Total = 1, Utilise = 2, Libre = 3, Utilisation = 4, Nom = 5
 	}
-	
+
 	public ListVolumesService(string host, string user, string password, int port = 22) : base(host, user, password, port)
 	{
 	}
@@ -17,13 +17,15 @@ internal class ListVolumesService : SSHService
 	{
 		await ConnectAsync();
 		var result = await RunCommandAsync("df -h");
-		
+
 		return ParseSshResponse(result);
 	}
 
 	private List<FileSystem> ParseSshResponse(string retourCommandeBrut)
 	{
-		var lines = retourCommandeBrut.Split('\n').SkipLast(1).Skip(1); // casse la chaine en lignes
+		var lines = retourCommandeBrut
+			.Split('\n') // casse la chaine en lignes
+			.Where(line => line.Contains("volume"));
 
 		return lines.Select(ParseBySpace).ToList();
 	}
@@ -53,13 +55,13 @@ internal class ListVolumesService : SSHService
 			}
 			else if (ValidColumn(idColonne, Colonnes.Nom))
 			{
-				fileSystem.Volume = CleanName(item);
+				fileSystem.Volume = item;
 			}
 			else if (ValidColumn(idColonne, Colonnes.Libre))
 			{
 				fileSystem.Available = item;
 			}
-			
+
 			compteurColonne++;
 		}
 
@@ -70,15 +72,5 @@ internal class ListVolumesService : SSHService
 	private bool ValidColumn(int id, Colonnes colonne)
 	{
 		return id == (int) colonne;
-	}
-
-	private static string CleanName(string name)
-    {
-        name = name.Substring(1);
-
-        if (name.Contains("/usbshare"))
-            name = name.Remove(name.Length - "/usbshare".Length, "/usbshare".Length);
-
-        return name;
 	}
 }
