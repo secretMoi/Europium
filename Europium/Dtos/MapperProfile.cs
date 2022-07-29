@@ -7,6 +7,6 @@ public class MapperProfile : Profile
 {
 	public MapperProfile()
 	{
-		CreateMap<MonitoredApiDto, ApiToMonitor>().ReverseMap();
+		// CreateMap<MonitoredApiDto, ApiToMonitor>().ReverseMap();
 	}
 }

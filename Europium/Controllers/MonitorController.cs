@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Europium.Dtos;
-using Europium.Models;
+﻿using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
 using Europium.Services;
@@ -15,16 +13,14 @@ namespace Europium.Controllers;
 public class MonitorController : ControllerBase
 {
 	private readonly MonitorService _monitorService;
-	private readonly IMapper  _mapper;
 	
 	private readonly EuropiumContext _europiumContext;
 	private readonly AppConfig AppConfig;
 	
-	public MonitorController(EuropiumContext europiumContext, IOptions<AppConfig> optionsSnapshot, MonitorService monitorService, IMapper mapper)
+	public MonitorController(EuropiumContext europiumContext, IOptions<AppConfig> optionsSnapshot, MonitorService monitorService)
 	{
 		_europiumContext = europiumContext;
 		_monitorService = monitorService;
-		_mapper = mapper;
 		AppConfig = optionsSnapshot.Value;
 	}
 	
@@ -38,11 +34,9 @@ public class MonitorController : ControllerBase
 			api.Logo = $"{Request.Scheme}://{Request.Host.Value}/{AppConfig.ApiToMonitorImagePath}/{api.Logo}";
 		}
 		
-		var monitoredApiDto = _mapper.Map<List<MonitoredApiDto>>(apis);
+		_monitorService.VerifyAllApisState(apis);
 		
-		_monitorService.VerifyAllApisState(monitoredApiDto);
-		
-		return Ok(monitoredApiDto);
+		return Ok(apis);
 	}
 	
 	[HttpPost("apis")]

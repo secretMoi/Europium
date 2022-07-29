@@ -1,18 +1,18 @@
-﻿using Europium.Dtos;
-using Europium.Models;
+﻿using Europium.Models;
+using Europium.Repositories.Models;
 
 namespace Europium.Services;
 
 public class MonitorService
 {
-	private RadarrService _radarrService;
+	private readonly RadarrService _radarrService;
 	
 	public MonitorService(RadarrService radarrService)
 	{
 		_radarrService = radarrService;
 	}
 	
-	public void VerifyAllApisState(List<MonitoredApiDto> monitoredApis)
+	public void VerifyAllApisState(List<ApiToMonitor> monitoredApis)
 	{
 		foreach(var monitoredApi in monitoredApis)
 		{
@@ -21,7 +21,7 @@ public class MonitorService
 				foreach (var apiUrl in monitoredApi.ApiUrls)
 				{
 					_radarrService.BaseUrl = apiUrl.Url;
-					monitoredApi.State = _radarrService.IsUp();
+					apiUrl.State = _radarrService.IsUp();
 				}
 			}
 		}
