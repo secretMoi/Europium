@@ -5,7 +5,7 @@ namespace Europium.Services.Ssh;
 
 public class ListFilesService : SSHService
 {
-	private ListFilesArguments _listFilesArguments;
+	private ListFilesArguments? _listFilesArguments;
 	
 	public ListFilesService(string host, string user, string password, int port = 22) : base(host, user, password, port)
 	{
@@ -56,14 +56,14 @@ public class ListFilesService : SSHService
 
 	private string GetSshCommandToExecute()
 	{
-		var commandToExecute = "find " + _listFilesArguments.Path;
+		var commandToExecute = "find " + _listFilesArguments?.Path;
 
-		if (_listFilesArguments.FileType == FileType.File)
+		if (_listFilesArguments?.FileType == FileType.File)
 			commandToExecute += " -type f";
-		if (_listFilesArguments.FileType == FileType.Folder)
+		if (_listFilesArguments?.FileType == FileType.Folder)
 			commandToExecute += " -type d";
 
-		commandToExecute += " -exec du -S {} + | sort -rh | head -n " + _listFilesArguments.Limit;
+		commandToExecute += " -exec du -S {} + | sort -rh | head -n " + _listFilesArguments?.Limit;
 
 		return commandToExecute;
 	}

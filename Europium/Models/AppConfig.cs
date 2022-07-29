@@ -6,4 +6,6 @@ public class AppConfig
 	public string SshUser { get; set; } = null!;
 	public string SshPassword { get; set; } = null!;
 	public int SshPort { get; set; }
+	public string EuropiumDatabase { get; set; } = null!;
+	public string ApiToMonitorImagePath { get; set; } = null!;
 }
