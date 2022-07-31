@@ -23,8 +23,16 @@ public class RadarrService
 	
 	public bool IsUp()
 	{
-		var response = _httpClient.GetAsync(BaseUrl + "/api/v3/system/status").Result;
-
-		return response.IsSuccessStatusCode;
+		try
+		{
+			using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 1));
+			var response = _httpClient.GetAsync(BaseUrl + "/api/v3/system/status", cts.Token).Result;
+		       
+			return response.IsSuccessStatusCode;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
 	}
 }

@@ -8,4 +8,6 @@ public class AppConfig
 	public int SshPort { get; set; }
 	public string EuropiumDatabase { get; set; } = null!;
 	public string ApiToMonitorImagePath { get; set; } = null!;
+	public string ServerUrl { get; set; } = null!;
+	public List<string> AllowedUrls { get; set; } = null!;
 }

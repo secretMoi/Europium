@@ -31,7 +31,7 @@ public class MonitorController : ControllerBase
 
 		foreach (var api in apis)
 		{
-			api.Logo = $"{Request.Scheme}://{Request.Host.Value}/{AppConfig.ApiToMonitorImagePath}/{api.Logo}";
+			api.Logo = $"{AppConfig.ServerUrl}/{AppConfig.ApiToMonitorImagePath}/{api.Logo}";
 		}
 		
 		_monitorService.VerifyAllApisState(apis);

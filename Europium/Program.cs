@@ -16,12 +16,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(s =>
 }
 );
 
-builder.Host.ConfigureAppConfiguration((_, config) =>
-{
-	config.AddJsonFile("appconfig.json",
-		optional: false,
-		reloadOnChange: false);
-});
+builder.Configuration.AddJsonFile("appconfig.json", false, true);
 
 // initialise le service de connexion à la bdd
 builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
@@ -31,9 +26,11 @@ builder.Services.AddCors(options =>
 	options.AddPolicy(name: MyAllowSpecificOrigins,
 		policy  =>
 		{
-			policy.WithOrigins("http://localhost:4200", "https://localhost:4200");
+			policy.WithOrigins(
+				builder.Configuration.GetSection("AllowedUrls").Get<string[]>()
+				
+				);
 			policy.WithHeaders("authorization", "accept", "content-type", "origin");
-			// policy.AllowAnyHeader();
 		});
 });
 

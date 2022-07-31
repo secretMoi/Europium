@@ -1,5 +1,4 @@
-﻿using Europium.Models;
-using Europium.Repositories.Models;
+﻿using Europium.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Europium.Repositories;
