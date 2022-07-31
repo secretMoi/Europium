@@ -29,14 +29,21 @@ public class MonitorController : ControllerBase
 	{
 		var apis = await _europiumContext.ApisToMonitor.Include(p => p.ApiUrls).ToListAsync();
 
-		foreach (var api in apis)
-		{
-			api.Logo = $"{AppConfig.ServerUrl}/{AppConfig.ApiToMonitorImagePath}/{api.Logo}";
-		}
-		
 		_monitorService.VerifyAllApisState(apis);
 		
 		return Ok(apis);
+	}
+	
+	[HttpGet("{apiCode}/logo")]
+	public async Task<IActionResult> GetApiLogo(string apiCode)
+	{
+		var api = await _monitorService.GetApiByCodeAsync(apiCode);
+
+		if (api is null) return NotFound();
+
+		var apiLogo = await _monitorService.GetApiLogoAsync(api.Logo);
+		
+		return Ok("data:image/png;base64," + Convert.ToBase64String(apiLogo));
 	}
 	
 	[HttpPost("apis")]
