@@ -48,6 +48,7 @@ builder.Services.AddSingleton<ConfigProgram>();
 builder.Services.AddScoped<ApisToMonitorRepository>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<RadarrService>();
+builder.Services.AddScoped<SonarrService>();
 
 var app = builder.Build();
 

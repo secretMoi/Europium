@@ -8,13 +8,15 @@ namespace Europium.Services;
 public class MonitorService
 {
 	private readonly RadarrService _radarrService;
+	private readonly SonarrService _sonarrService;
 	private readonly ApisToMonitorRepository _monitorRepository;
 	private readonly AppConfig AppConfig;
 	
-	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository)
+	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
+		_sonarrService = sonarrService;
 		AppConfig = optionsSnapshot.Value;
 	}
 	
@@ -28,6 +30,14 @@ public class MonitorService
 				{
 					_radarrService.BaseUrl = apiUrl.Url;
 					apiUrl.State = _radarrService.IsUp();
+				}
+			}
+			if (ApiCode.SONARR.Equals(monitoredApi.Code))
+			{
+				foreach (var apiUrl in monitoredApi.ApiUrls)
+				{
+					_sonarrService.BaseUrl = apiUrl.Url;
+					apiUrl.State = _sonarrService.IsUp();
 				}
 			}
 		}
