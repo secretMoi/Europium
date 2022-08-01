@@ -33,6 +33,14 @@
       <Content Include="Ressources\sonarr.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Ressources\jackett.png" />
+      <Content Include="Ressources\jackett.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Ressources\qbittorrent.svg" />
+      <Content Include="Ressources\qbittorrent.svg">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

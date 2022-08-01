@@ -1,4 +1,5 @@
 ﻿using Europium.Repositories;
+using Europium.Repositories.Models;
 
 namespace Europium.Services.Apis;
 
@@ -7,6 +8,7 @@ public class CommonApiService
 	protected readonly ApisToMonitorRepository _apisToMonitorRepository;
 
 	protected readonly HttpClient _httpClient;
+	protected ApiToMonitor _monitoredApi;
 	
 	public CommonApiService(ApisToMonitorRepository apisToMonitorRepository)
 	{

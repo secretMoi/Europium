@@ -2,7 +2,6 @@
 using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
-using Europium.Services;
 using Europium.Services.Apis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

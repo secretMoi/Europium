@@ -1,7 +1,6 @@
 using Europium;
 using Europium.Models;
 using Europium.Repositories;
-using Europium.Services;
 using Europium.Services.Apis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -75,6 +74,7 @@ builder.Services.AddScoped<PlexService>();
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
+builder.Services.AddScoped<QBitTorrentService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
 
