@@ -4,7 +4,7 @@ using Europium.Repositories.Models;
 using Plex.Api.Factories;
 using Plex.Library.ApiModels.Accounts;
 
-namespace Europium.Services;
+namespace Europium.Services.Apis;
 
 public class PlexService
 {

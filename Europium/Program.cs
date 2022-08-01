@@ -2,6 +2,7 @@ using Europium;
 using Europium.Models;
 using Europium.Repositories;
 using Europium.Services;
+using Europium.Services.Apis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
@@ -71,7 +72,9 @@ builder.Services.AddScoped<IPlexFactory, PlexFactory>();
 builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
 builder.Services.AddScoped<PlexService>();
 
+builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();
+builder.Services.AddScoped<JackettService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
 
