@@ -1,4 +1,5 @@
-﻿using Europium.Models;
+﻿using Europium.Dtos;
+using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
 using Europium.Services;
@@ -29,9 +30,13 @@ public class MonitorController : ControllerBase
 	{
 		var apis = await _europiumContext.ApisToMonitor.Include(p => p.ApiUrls).ToListAsync();
 
-		_monitorService.VerifyAllApisState(apis);
-		
 		return Ok(apis);
+	}
+	
+	[HttpPost("api/status")]
+	public async Task<IActionResult> GetApisToMonitor([FromBody] ApiStateDto apiStateDto)
+	{
+		return Ok(await _monitorService.VerifySingleApiState(apiStateDto.Code, apiStateDto.Url));
 	}
 	
 	[HttpGet("{apiCode}/logo")]

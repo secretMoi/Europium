@@ -1,4 +1,4 @@
-﻿using Europium.Models;
+﻿using Europium.Dtos;
 
 namespace Europium.Services.Ssh;
 

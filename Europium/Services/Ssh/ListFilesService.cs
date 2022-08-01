@@ -1,5 +1,5 @@
-﻿using Europium.Models;
-using File = Europium.Models.File;
+﻿using Europium.Dtos;
+using File = Europium.Dtos.File;
 
 namespace Europium.Services.Ssh;
 

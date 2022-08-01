@@ -9,43 +9,42 @@ public class MonitorService
 {
 	private readonly RadarrService _radarrService;
 	private readonly SonarrService _sonarrService;
+	private readonly PlexService _plexService;
 	private readonly ApisToMonitorRepository _monitorRepository;
 	private readonly AppConfig AppConfig;
 	
-	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService)
+	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
 		_sonarrService = sonarrService;
+		_plexService = plexService;
 		AppConfig = optionsSnapshot.Value;
 	}
-	
-	public void VerifyAllApisState(List<ApiToMonitor> monitoredApis)
-	{
-		foreach(var monitoredApi in monitoredApis)
-		{
-			if (ApiCode.RADARR.Equals(monitoredApi.Code))
-			{
-				foreach (var apiUrl in monitoredApi.ApiUrls)
-				{
-					_radarrService.BaseUrl = apiUrl.Url;
-					apiUrl.State = _radarrService.IsUp();
-				}
-			}
-			if (ApiCode.SONARR.Equals(monitoredApi.Code))
-			{
-				foreach (var apiUrl in monitoredApi.ApiUrls)
-				{
-					_sonarrService.BaseUrl = apiUrl.Url;
-					apiUrl.State = _sonarrService.IsUp();
-				}
-			}
-		}
-	}
 
+	public async Task<bool?> VerifySingleApiState(string code, string url)
+	{
+		if (ApiCode.RADARR.Equals(code))
+		{
+			return await _radarrService.IsUpAsync(url);
+		}
+		if (ApiCode.SONARR.Equals(code))
+		{
+			return await _sonarrService.IsUpAsync(url);
+		}
+		
+		if (ApiCode.PLEX.Equals(code))
+		{
+			// var servers = await _plexService.PlexAccount.ServerSummaries();
+			return await _plexService.IsUpAsync(url);
+		}
+
+		return null;
+	}
+	
 	public async Task<byte[]> GetApiLogoAsync(string imageName)
 	{
-		return await System.IO.File.ReadAllBytesAsync($"{AppConfig.ApiToMonitorImagePath}/{imageName}"); 
+		return await File.ReadAllBytesAsync($"{AppConfig.ApiToMonitorImagePath}/{imageName}"); 
 	}
 
 	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)

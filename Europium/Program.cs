@@ -5,6 +5,12 @@ using Europium.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
+using Plex.Api.Factories;
+using Plex.Library.Factories;
+using Plex.ServerApi;
+using Plex.ServerApi.Api;
+using Plex.ServerApi.Clients;
+using Plex.ServerApi.Clients.Interfaces;
 
 const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -46,9 +52,30 @@ builder.Services.Configure<AppConfig>(builder.Configuration);
 
 builder.Services.AddSingleton<ConfigProgram>();
 builder.Services.AddScoped<ApisToMonitorRepository>();
+
+// Create Client Options
+var apiOptions = new ClientOptions
+{
+	Product = "API_UnitTests",
+	DeviceName = "API_UnitTests",
+	ClientId = "MyClientId",
+	Platform = "Web",
+	Version = "v1"
+};
+builder.Services.AddSingleton(apiOptions);
+builder.Services.AddScoped<IPlexServerClient, PlexServerClient>();
+builder.Services.AddScoped<IPlexAccountClient, PlexAccountClient>();
+builder.Services.AddScoped<IPlexLibraryClient, PlexLibraryClient>();
+builder.Services.AddScoped<IApiService, ApiService>();
+builder.Services.AddScoped<IPlexFactory, PlexFactory>();
+builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
+builder.Services.AddScoped<PlexService>();
+
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
+
+
 
 var app = builder.Build();
 

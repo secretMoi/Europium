@@ -20,6 +20,6 @@ public class EuropiumContext : DbContext
 		optionsBuilder.UseSqlServer(AppConfig.EuropiumDatabase);
 	}
 
-	public DbSet<ApiToMonitor?> ApisToMonitor { get; set; }
-	public DbSet<ApiUrl> ApiUrls { get; set; }
+	public DbSet<ApiToMonitor> ApisToMonitor { get; set; } = null!;
+	public DbSet<ApiUrl> ApiUrls { get; set; } = null!;
 }

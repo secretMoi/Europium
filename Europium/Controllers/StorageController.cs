@@ -1,4 +1,5 @@
-﻿using Europium.Models;
+﻿using Europium.Dtos;
+using Europium.Models;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

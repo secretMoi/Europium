@@ -1,4 +1,4 @@
-﻿namespace Europium.Models;
+﻿namespace Europium.Dtos;
 
 public class File
 {
