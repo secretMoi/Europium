@@ -46,9 +46,7 @@ public class MonitorController : ControllerBase
 
 		if (api is null) return NotFound();
 
-		var apiLogo = await _monitorService.GetApiLogoAsync(api.Logo);
-		
-		return Ok("data:image/png;base64," + Convert.ToBase64String(apiLogo));
+		return Ok(await _monitorService.GetApiLogoAsync(api.Logo));
 	}
 	
 	[HttpPost("apis")]

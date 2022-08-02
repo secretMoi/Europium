@@ -53,14 +53,30 @@ public class MonitorService
 		return null;
 	}
 	
-	public async Task<byte[]> GetApiLogoAsync(string imageName)
+	public async Task<string?> GetApiLogoAsync(string imageName)
 	{
-		if (String.IsNullOrEmpty(imageName))
+		if (string.IsNullOrEmpty(imageName))
 		{
-			return new byte[] { };
+			return null;
+		}
+
+		var byteImage = await File.ReadAllBytesAsync($"{AppConfig.ApiToMonitorImagePath}/{imageName}");
+		string imageFormat;
+
+		if (imageName.EndsWith(".svg"))
+		{
+			imageFormat = "svg+xml";
+		}
+		else if (imageName.EndsWith(".png"))
+		{
+			imageFormat = "png";
+		}
+		else
+		{
+			throw new BadImageFormatException();
 		}
 		
-		return await File.ReadAllBytesAsync($"{AppConfig.ApiToMonitorImagePath}/{imageName}"); 
+		return $"data:image/{imageFormat};base64,{Convert.ToBase64String(byteImage)}";
 	}
 
 	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)
