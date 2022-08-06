@@ -20,16 +20,16 @@ public class ApisToMonitorRepository
 
 	public async Task<List<ApiToMonitor?>> GetAllAsync()
 	{
-		return await _europiumContext.ApisToMonitor.ToListAsync(); // retourne la liste des commandes
+		return await _europiumContext.ApisToMonitor.ToListAsync();
 	}
 
 	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)
 	{
-		return await _europiumContext.ApisToMonitor.FirstOrDefaultAsync(api => api != null && api.Code.Equals(apiCode)); // retourne la liste des commandes
+		return await _europiumContext.ApisToMonitor.Include(p => p.ApiUrls).FirstOrDefaultAsync(api => api != null && api.Code.Equals(apiCode));
 	}
 
 	public ApiToMonitor? GetApiByCode(string apiCode)
 	{
-		return _europiumContext.ApisToMonitor.FirstOrDefault(api => api != null && api.Code.Equals(apiCode)); // retourne la liste des commandes
+		return _europiumContext.ApisToMonitor.FirstOrDefault(api => api != null && api.Code.Equals(apiCode));
 	}
 }

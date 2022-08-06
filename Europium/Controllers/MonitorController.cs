@@ -33,6 +33,12 @@ public class MonitorController : ControllerBase
 		return Ok(apis);
 	}
 	
+	[HttpGet("api/{apiCode}")]
+	public async Task<IActionResult> GetApiById(string apiCode)
+	{
+		return Ok(await _monitorService.GetApiByCodeAsync(apiCode));
+	}
+	
 	[HttpPost("api/status")]
 	public async Task<IActionResult> GetApisToMonitor([FromBody] ApiStateDto apiStateDto)
 	{
@@ -58,7 +64,7 @@ public class MonitorController : ControllerBase
 	}
 	
 	[HttpDelete("apis/{id}")]
-	public async Task<IActionResult> SaveApisToMonitor(int id)
+	public async Task<IActionResult> DeleteApiById(int id)
 	{
 		try
 		{
