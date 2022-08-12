@@ -45,6 +45,14 @@ public class MonitorController : ControllerBase
 		return Ok(await _monitorService.VerifySingleApiState(apiStateDto.Code, apiStateDto.Url));
 	}
 	
+	[HttpPost("api")]
+	public async Task<IActionResult> SaveApi([FromBody] ApiToMonitor api)
+	{
+		if (await _monitorService.SaveApiAsync(api)) return Ok();
+		
+		return BadRequest();
+	}
+	
 	[HttpGet("{apiCode}/logo")]
 	public async Task<IActionResult> GetApiLogo(string apiCode)
 	{

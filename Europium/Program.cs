@@ -52,6 +52,7 @@ builder.Services.Configure<AppConfig>(builder.Configuration);
 
 builder.Services.AddSingleton<ConfigProgram>();
 builder.Services.AddScoped<ApisToMonitorRepository>();
+builder.Services.AddScoped<ApiUrlRepository>();
 
 // Create Client Options
 var apiOptions = new ClientOptions

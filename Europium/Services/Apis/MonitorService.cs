@@ -12,10 +12,13 @@ public class MonitorService
 	private readonly JackettService _jackettService;
 	private readonly QBitTorrentService _qBitTorrentService;
 	private readonly PlexService _plexService;
+	
 	private readonly ApisToMonitorRepository _monitorRepository;
+	private readonly ApiUrlRepository _apiUrlRepository;
+	
 	private readonly AppConfig AppConfig;
 	
-	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService, JackettService jackettService, QBitTorrentService qBitTorrentService)
+	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService, JackettService jackettService, QBitTorrentService qBitTorrentService, ApiUrlRepository apiUrlRepository)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
@@ -23,6 +26,7 @@ public class MonitorService
 		_plexService = plexService;
 		_jackettService = jackettService;
 		_qBitTorrentService = qBitTorrentService;
+		_apiUrlRepository = apiUrlRepository;
 		AppConfig = optionsSnapshot.Value;
 	}
 
@@ -82,5 +86,10 @@ public class MonitorService
 	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)
 	{
 		return await _monitorRepository.GetApiByCodeAsync(apiCode);
+	}
+
+	public async Task<bool> SaveApiAsync(ApiToMonitor api)
+	{
+		return await _monitorRepository.SaveApiAsync(api);
 	}
 }

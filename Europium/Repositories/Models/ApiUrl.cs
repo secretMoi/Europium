@@ -15,5 +15,5 @@ public class ApiUrl
 	public bool? State { get; set; }
 	
 	[JsonIgnore]
-	public ApiToMonitor ApiToMonitor { get; set; }
+	public ApiToMonitor? ApiToMonitor { get; set; }
 }
