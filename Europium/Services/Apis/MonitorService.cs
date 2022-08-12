@@ -1,6 +1,7 @@
 ﻿using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
+using Europium.Services.Apis.QBitTorrent;
 using Microsoft.Extensions.Options;
 
 namespace Europium.Services.Apis;
@@ -83,7 +84,7 @@ public class MonitorService
 		return $"data:image/{imageFormat};base64,{Convert.ToBase64String(byteImage)}";
 	}
 
-	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)
+	public async Task<ApiToMonitor> GetApiByCodeAsync(string apiCode)
 	{
 		return await _monitorRepository.GetApiByCodeAsync(apiCode);
 	}

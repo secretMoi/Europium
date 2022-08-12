@@ -2,6 +2,7 @@ using Europium;
 using Europium.Models;
 using Europium.Repositories;
 using Europium.Services.Apis;
+using Europium.Services.Apis.QBitTorrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
@@ -78,6 +79,8 @@ builder.Services.AddScoped<JackettService>();
 builder.Services.AddScoped<QBitTorrentService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
+
+builder.Services.AddScoped<TorrentService>();
 
 
 

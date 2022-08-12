@@ -1,4 +1,5 @@
-﻿using Europium.Repositories;
+﻿using System.Net;
+using Europium.Repositories;
 using Europium.Repositories.Models;
 
 namespace Europium.Services.Apis;
@@ -9,13 +10,18 @@ public class CommonApiService
 
 	protected readonly HttpClient _httpClient;
 	protected ApiToMonitor _monitoredApi;
+
+	protected readonly CookieContainer cookies;
 	
 	public CommonApiService(ApisToMonitorRepository apisToMonitorRepository)
 	{
 		_apisToMonitorRepository = apisToMonitorRepository;
-		_httpClient = new HttpClient(new HttpClientHandler());
+		
+		cookies = new CookieContainer();
+		var handler = new HttpClientHandler();
+		handler.CookieContainer = cookies;
+		_httpClient = new HttpClient(handler);
 	}
-	
 	
 	public virtual async Task<bool> IsUpAsync(string url)
 	{
