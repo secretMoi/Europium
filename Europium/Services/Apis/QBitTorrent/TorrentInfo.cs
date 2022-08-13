@@ -5,6 +5,7 @@ namespace Europium.Services.Apis.QBitTorrent;
 public class TorrentInfo
 {
 	public string Name { get; set; }
+	public string Hash { get; set; }
 	public string Category { get; set; }
 	public string State { get; set; }
 	public long Size { get; set; }

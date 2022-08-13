@@ -19,4 +19,18 @@ public class TorrentController : ControllerBase
 	{
 		return Ok(await _torrentService.GetAllAsync());
 	}
+	
+	[HttpPost("delete/{torrentHash}")]
+	public async Task<IActionResult> GetAllTorrents(string torrentHash)
+	{
+		try
+		{
+			return Ok(await _torrentService.DeleteTorrentAsync(torrentHash));
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			return BadRequest();
+		}
+	}
 }
