@@ -11,6 +11,8 @@ public class TorrentInfo
 	public long Size { get; set; }
 	public float Progress { get; set; }
 	public int Eta { get; set; }
+	[JsonProperty("added_on")]
+	public long AddedOn { get; set; }
 	[JsonProperty("completion_on")]
 	public int CompletionOn { get; set; }
 	public long Completed { get; set; }
