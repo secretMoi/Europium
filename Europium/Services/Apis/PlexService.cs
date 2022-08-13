@@ -13,7 +13,7 @@ public class PlexService
 
 	private readonly ApiToMonitor _plexApi;
 	
-	public PlexAccount PlexAccount { get; }
+	public static PlexAccount? PlexAccount { get; private set; }
 
 	public PlexService(IPlexFactory plexFactory, ApisToMonitorRepository monitorRepository)
 	{
@@ -21,7 +21,7 @@ public class PlexService
 
 		_plexApi = _monitorRepository.GetApiByCode(ApiCode.PLEX);
 
-		PlexAccount = plexFactory.GetPlexAccount(_plexApi.ApiKey);
+		PlexAccount ??= plexFactory.GetPlexAccount(_plexApi?.ApiKey);
 		
 		var monitoredApi = _monitorRepository.GetApiByCode(ApiCode.SONARR);
 		
