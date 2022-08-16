@@ -13,13 +13,14 @@ public class MonitorService
 	private readonly JackettService _jackettService;
 	private readonly QBitTorrentService _qBitTorrentService;
 	private readonly PlexService _plexService;
-	
+
 	private readonly ApisToMonitorRepository _monitorRepository;
-	private readonly ApiUrlRepository _apiUrlRepository;
-	
+
 	private readonly AppConfig AppConfig;
-	
-	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot, ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService, JackettService jackettService, QBitTorrentService qBitTorrentService, ApiUrlRepository apiUrlRepository)
+
+	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot,
+		ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService,
+		JackettService jackettService, QBitTorrentService qBitTorrentService)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
@@ -27,7 +28,6 @@ public class MonitorService
 		_plexService = plexService;
 		_jackettService = jackettService;
 		_qBitTorrentService = qBitTorrentService;
-		_apiUrlRepository = apiUrlRepository;
 		AppConfig = optionsSnapshot.Value;
 	}
 
@@ -37,19 +37,23 @@ public class MonitorService
 		{
 			return await _radarrService.IsUpAsync(url);
 		}
+
 		if (ApiCode.SONARR.Equals(code))
 		{
 			return await _sonarrService.IsUpAsync(url);
 		}
+
 		if (ApiCode.JACKETT.Equals(code))
 		{
 			return await _jackettService.IsUpAsync(url);
 		}
+
 		if (ApiCode.PLEX.Equals(code))
 		{
 			// var servers = await _plexService.PlexAccount.ServerSummaries();
 			return await _plexService.IsUpAsync(url);
 		}
+
 		if (ApiCode.QBITTORRENT.Equals(code))
 		{
 			return await _qBitTorrentService.IsUpAsync(url);
@@ -57,7 +61,7 @@ public class MonitorService
 
 		return null;
 	}
-	
+
 	public async Task<string?> GetApiLogoAsync(string imageName)
 	{
 		if (string.IsNullOrEmpty(imageName))
@@ -80,7 +84,7 @@ public class MonitorService
 		{
 			throw new BadImageFormatException();
 		}
-		
+
 		return $"data:image/{imageFormat};base64,{Convert.ToBase64String(byteImage)}";
 	}
 
