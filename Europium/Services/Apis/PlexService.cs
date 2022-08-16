@@ -8,25 +8,23 @@ namespace Europium.Services.Apis;
 
 public class PlexService
 {
-	private readonly ApisToMonitorRepository _monitorRepository;
-	private readonly HttpClient _httpClient;
+	private static HttpClient? _httpClient;
 
-	private readonly ApiToMonitor _plexApi;
-	
-	public static PlexAccount? PlexAccount { get; private set; }
+	private static ApiToMonitor? _plexApi;
+
+	private static PlexAccount? PlexAccount { get; set; }
 
 	public PlexService(IPlexFactory plexFactory, ApisToMonitorRepository monitorRepository)
 	{
-		_monitorRepository = monitorRepository;
-
-		_plexApi = _monitorRepository.GetApiByCode(ApiCode.PLEX);
+		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
 
 		PlexAccount ??= plexFactory.GetPlexAccount(_plexApi?.ApiKey);
-		
-		var monitoredApi = _monitorRepository.GetApiByCode(ApiCode.SONARR);
-		
-		_httpClient = new HttpClient(new HttpClientHandler());
-		_httpClient.DefaultRequestHeaders.Add("X-Api-Key", monitoredApi?.ApiKey);
+
+		if (_httpClient is null)
+		{
+			_httpClient = new HttpClient(new HttpClientHandler());
+			_httpClient.DefaultRequestHeaders.Add("X-Api-Key", _plexApi?.ApiKey);
+		}
 	}
 
 	public async Task<bool?> IsUpAsync(string url)
@@ -34,7 +32,7 @@ public class PlexService
 		try
 		{
 			using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-			var response = await _httpClient.GetAsync(url + "?X-Plex-Token=" + _plexApi.ApiKey, cts.Token);
+			var response = await _httpClient?.GetAsync(url + "?X-Plex-Token=" + _plexApi?.ApiKey, cts.Token)!;
 		       
 			return response.IsSuccessStatusCode;
 		}

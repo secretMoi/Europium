@@ -56,7 +56,7 @@ public class MonitorService
 
 		if (ApiCode.QBITTORRENT.Equals(code))
 		{
-			return await _qBitTorrentService.IsUpAsync(url);
+			return await _qBitTorrentService.IsUpAsync();
 		}
 
 		return null;

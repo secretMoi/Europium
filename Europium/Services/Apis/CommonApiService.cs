@@ -8,11 +8,11 @@ public class CommonApiService
 {
 	protected readonly ApisToMonitorRepository _apisToMonitorRepository;
 
-	protected readonly HttpClient _httpClient;
+	protected HttpClient _httpClient;
+	protected CookieContainer cookies;
+	
 	protected ApiToMonitor? _monitoredApi;
 
-	protected readonly CookieContainer cookies;
-	
 	public CommonApiService(ApisToMonitorRepository apisToMonitorRepository)
 	{
 		_apisToMonitorRepository = apisToMonitorRepository;

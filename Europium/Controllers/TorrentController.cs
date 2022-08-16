@@ -7,9 +7,9 @@ namespace Europium.Controllers;
 [Route("[controller]")]
 public class TorrentController : ControllerBase
 {
-	private readonly TorrentService _torrentService;
+	private readonly QBitTorrentService _torrentService;
 
-	public TorrentController(TorrentService torrentService)
+	public TorrentController(QBitTorrentService torrentService)
 	{
 		_torrentService = torrentService;
 	}

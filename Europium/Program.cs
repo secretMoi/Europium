@@ -84,8 +84,6 @@ builder.Services.AddScoped<QBitTorrentService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
 
-builder.Services.AddScoped<TorrentService>();
-
 
 
 var app = builder.Build();
