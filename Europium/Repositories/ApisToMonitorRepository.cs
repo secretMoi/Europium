@@ -26,11 +26,11 @@ public class ApisToMonitorRepository
 		return await _europiumContext.ApisToMonitor.ToListAsync();
 	}
 
-	public async Task<ApiToMonitor> GetApiByCodeAsync(string apiCode)
+	public async Task<ApiToMonitor?> GetApiByCodeAsync(string apiCode)
 	{
 		return await _europiumContext.ApisToMonitor
 			.Include(p => p.ApiUrls)
-			.FirstOrDefaultAsync(api => api != null && api.Code.Equals(apiCode));
+			.FirstOrDefaultAsync(api => api.Code.Equals(apiCode)) ?? null;
 	}
 
 	public ApiToMonitor? GetApiByCode(string apiCode)

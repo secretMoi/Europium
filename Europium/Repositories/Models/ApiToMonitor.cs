@@ -13,5 +13,5 @@ public class ApiToMonitor
 	
 	
 
-	public virtual List<ApiUrl> ApiUrls { get; set; }
+	public virtual List<ApiUrl> ApiUrls { get; set; } = null!;
 }

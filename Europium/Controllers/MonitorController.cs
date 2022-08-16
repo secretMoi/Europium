@@ -1,11 +1,9 @@
 ﻿using Europium.Dtos;
-using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
 using Europium.Services.Apis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Europium.Controllers;
 
@@ -16,13 +14,11 @@ public class MonitorController : ControllerBase
 	private readonly MonitorService _monitorService;
 	
 	private readonly EuropiumContext _europiumContext;
-	private readonly AppConfig AppConfig;
 	
-	public MonitorController(EuropiumContext europiumContext, IOptions<AppConfig> optionsSnapshot, MonitorService monitorService)
+	public MonitorController(EuropiumContext europiumContext, MonitorService monitorService)
 	{
 		_europiumContext = europiumContext;
 		_monitorService = monitorService;
-		AppConfig = optionsSnapshot.Value;
 	}
 	
 	[HttpGet("apis")]
@@ -40,7 +36,7 @@ public class MonitorController : ControllerBase
 	}
 	
 	[HttpPost("api/status")]
-	public async Task<IActionResult> GetApisToMonitor([FromBody] ApiStateDto apiStateDto)
+	public async Task<IActionResult> GetApiStatus([FromBody] ApiStateDto apiStateDto)
 	{
 		return Ok(await _monitorService.VerifySingleApiState(apiStateDto.Code, apiStateDto.Url));
 	}
@@ -58,13 +54,13 @@ public class MonitorController : ControllerBase
 	{
 		var api = await _monitorService.GetApiByCodeAsync(apiCode);
 
-		if (api is null) return NotFound();
+		if (api?.Logo is null) return NotFound();
 
 		return Ok(await _monitorService.GetApiLogoAsync(api.Logo));
 	}
 	
 	[HttpPost("apis")]
-	public async Task<IActionResult> SaveApisToMonitor([FromBody] ApiToMonitor? apiToMonitor)
+	public async Task<IActionResult> SaveApisToMonitor([FromBody] ApiToMonitor apiToMonitor)
 	{
 		var apiToMonitorAdded = (await _europiumContext.ApisToMonitor.AddAsync(apiToMonitor)).Entity;
 		await _europiumContext.SaveChangesAsync();
@@ -76,7 +72,7 @@ public class MonitorController : ControllerBase
 	{
 		try
 		{
-			_europiumContext.ApisToMonitor.Remove(new ApiToMonitor() { ApiToMonitorId = id});
+			_europiumContext.ApisToMonitor.Remove(new ApiToMonitor { ApiToMonitorId = id});
 			await _europiumContext.SaveChangesAsync();
 			return Ok();
 		}

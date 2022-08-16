@@ -7,8 +7,8 @@ public class ApiUrl
 {
 	public int ApiUrlId { get; set; }
 	
-	public string Url { get; set; }
-	
+	public string Url { get; set; } = null!;
+
 	public int ApiToMonitorId { get; set; }
 	
 	[NotMapped]
