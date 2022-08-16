@@ -1,13 +1,16 @@
 ﻿using Europium.Dtos;
+using Europium.Models;
+using Microsoft.Extensions.Options;
 using File = Europium.Dtos.File;
 
 namespace Europium.Services.Ssh;
 
-public class ListFilesService : SSHService
+public class ListFilesService : SshService
 {
 	private ListFilesArguments? _listFilesArguments;
 	
-	public ListFilesService(string host, string user, string password, int port = 22) : base(host, user, password, port)
+	public ListFilesService(IOptions<AppConfig> optionsSnapshot)
+		: base(optionsSnapshot.Value.SshHost, optionsSnapshot.Value.SshUser, optionsSnapshot.Value.SshPassword, optionsSnapshot.Value.SshPort)
 	{
 	}
 

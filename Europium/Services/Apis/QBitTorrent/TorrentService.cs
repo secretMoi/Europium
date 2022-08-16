@@ -14,7 +14,7 @@ public class TorrentService : QBitTorrentService
 		await LoginAsync();
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
 		// cookies.Add(new Uri(LoginUrl), cookies.GetCookies(new Uri(LoginUrl)).First());
-		var response = await _httpClient.GetAsync(_monitoredApi.Url + "/api/v2/torrents/info?filter=all", cts.Token);
+		var response = await _httpClient.GetAsync(_monitoredApi?.Url + "/api/v2/torrents/info?filter=all", cts.Token);
 	       
 		return await response.Content.ReadAsAsync<List<TorrentInfo>>(cts.Token);
 	}
@@ -23,7 +23,7 @@ public class TorrentService : QBitTorrentService
 	{
 		await LoginAsync();
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		await _httpClient.GetAsync(_monitoredApi.Url + $"/api/v2/torrents/delete?hashes={torrentHash}&deleteFiles=false", cts.Token);
+		await _httpClient.GetAsync(_monitoredApi?.Url + $"/api/v2/torrents/delete?hashes={torrentHash}&deleteFiles=false", cts.Token);
 
 		return true;
 	}

@@ -3,6 +3,7 @@ using Europium.Models;
 using Europium.Repositories;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
+using Europium.Services.Ssh;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
@@ -72,6 +73,9 @@ builder.Services.AddScoped<IApiService, ApiService>();
 builder.Services.AddScoped<IPlexFactory, PlexFactory>();
 builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
 builder.Services.AddScoped<PlexService>();
+
+builder.Services.AddScoped<ListFilesService>();
+builder.Services.AddScoped<ListVolumesService>();
 
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();

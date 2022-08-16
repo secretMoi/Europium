@@ -1,15 +1,18 @@
 ﻿using Europium.Dtos;
+using Europium.Models;
+using Microsoft.Extensions.Options;
 
 namespace Europium.Services.Ssh;
 
-internal class ListVolumesService : SSHService
+public class ListVolumesService : SshService
 {
 	private enum Colonnes
 	{
 		Total = 1, Utilise = 2, Libre = 3, Utilisation = 4, Nom = 5
 	}
 
-	public ListVolumesService(string host, string user, string password, int port = 22) : base(host, user, password, port)
+	public ListVolumesService(IOptions<AppConfig> optionsSnapshot)
+		: base(optionsSnapshot.Value.SshHost, optionsSnapshot.Value.SshUser, optionsSnapshot.Value.SshPassword, optionsSnapshot.Value.SshPort)
 	{
 	}
 

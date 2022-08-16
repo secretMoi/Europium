@@ -1,8 +1,6 @@
 ﻿using Europium.Dtos;
-using Europium.Models;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Europium.Controllers;
 
@@ -10,19 +8,19 @@ namespace Europium.Controllers;
 [Route("[controller]")]
 public class StorageController : ControllerBase
 {
-	private readonly AppConfig AppConfig;
+	private readonly ListVolumesService _listVolumesService;
+	private readonly ListFilesService _listFilesService;
 
-	public StorageController(IOptions<AppConfig> optionsSnapshot)
+	public StorageController(ListVolumesService listVolumesService, ListFilesService listFilesService)
 	{
-		AppConfig = optionsSnapshot.Value;
+		_listVolumesService = listVolumesService;
+		_listFilesService = listFilesService;
 	}
 	
 	[HttpGet("filesystems")]
 	public async Task<IActionResult> GetFileSystems()
 	{
-		var listVolumesService = new ListVolumesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
-
-		var volumes = await listVolumesService.GetFileSystemsAsync();
+		var volumes = await _listVolumesService.GetFileSystemsAsync();
 
 		if (volumes.Count == 0)
 		{
@@ -35,9 +33,7 @@ public class StorageController : ControllerBase
 	[HttpPost("files")]
 	public async Task<IActionResult> GetFilesFromPath([FromBody]ListFilesArguments listFilesArguments)
 	{
-		var listFilesService = new ListFilesService(AppConfig.SshHost, AppConfig.SshUser, AppConfig.SshPassword, AppConfig.SshPort);
-		
-		var files = await listFilesService.GetFiles(listFilesArguments);
+		var files = await _listFilesService.GetFiles(listFilesArguments);
 		
 		if (files.Count == 0)
 		{

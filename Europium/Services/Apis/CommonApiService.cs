@@ -9,7 +9,7 @@ public class CommonApiService
 	protected readonly ApisToMonitorRepository _apisToMonitorRepository;
 
 	protected readonly HttpClient _httpClient;
-	protected ApiToMonitor _monitoredApi;
+	protected ApiToMonitor? _monitoredApi;
 
 	protected readonly CookieContainer cookies;
 	

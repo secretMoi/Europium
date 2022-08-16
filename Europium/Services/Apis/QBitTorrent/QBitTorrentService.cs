@@ -29,11 +29,11 @@ public class QBitTorrentService : CommonApiService
 	{
 		var logins = new List<KeyValuePair<string, string>>
 		{
-			new("username", _monitoredApi.UserName),
-			new("password", _monitoredApi.Password)
+			new("username", _monitoredApi?.UserName ?? string.Empty),
+			new("password", _monitoredApi?.Password ?? string.Empty)
 		};
 
-		var req = new HttpRequestMessage(HttpMethod.Post, _monitoredApi.Url + "/api/v2/auth/login") { Content = new FormUrlEncodedContent(logins) };
+		var req = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/auth/login") { Content = new FormUrlEncodedContent(logins) };
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
 		return await _httpClient.SendAsync(req, cts.Token);
 	}
