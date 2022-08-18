@@ -35,6 +35,26 @@ public class TheMovieDbService
 		return movie;
 	}
 
+	public async Task<Movie?> GetSerieByNameAsync(string name)
+	{
+		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
+
+		var parameters = GetUrlParameter();
+		parameters.Add("query", name);
+		
+		var response = await _httpClient?.GetAsync(GetCompleteUri("search/tv", parameters), cts.Token)!;
+
+		var movie = (await response.Content.ReadAsAsync<Movies>(cts.Token)).Results.FirstOrDefault();
+
+		if (movie is null) return null;
+
+		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
+		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
+		movie.Title = movie.Name;
+
+		return movie;
+	}
+
 	private string GetUrl(string path)
 	{
 		return _theMovieDb?.ApiUrl + path;

@@ -17,6 +17,20 @@ public class TheMovieDbController : ControllerBase
 	[HttpGet("movie/{movieName}")]
 	public async Task<IActionResult> GetMovieByName(string movieName)
 	{
-		return Ok(await _theMovieDbService.GetMovieByNameAsync(movieName));
+		var movie = await _theMovieDbService.GetMovieByNameAsync(movieName);
+
+		if (movie is null) return NotFound();
+		
+		return Ok(movie);
+	}
+	
+	[HttpGet("serie/{serieName}")]
+	public async Task<IActionResult> GetSerieByName(string serieName)
+	{
+		var serie = await _theMovieDbService.GetSerieByNameAsync(serieName);
+		
+		if (serie is null) return NotFound();
+		
+		return Ok(serie);
 	}
 }

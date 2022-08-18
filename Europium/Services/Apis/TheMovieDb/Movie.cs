@@ -7,6 +7,7 @@ public class Movie
 	public int Id { get; set; }
 	
 	public string Title { get; set; } = null!;
+	public string Name { get; set; } = null!;
 	
 	[JsonProperty("vote_average")]
 	public float VoteAverage { get; set; }
