@@ -19,7 +19,7 @@ public class TorrentController : ControllerBase
 	{
 		return Ok(await _torrentService.GetAllAsync());
 	}
-	
+
 	[HttpPost("delete/{torrentHash}")]
 	public async Task<IActionResult> GetAllTorrents(string torrentHash)
 	{

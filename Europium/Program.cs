@@ -3,6 +3,7 @@ using Europium.Models;
 using Europium.Repositories;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
+using Europium.Services.Apis.TheMovieDb;
 using Europium.Services.Ssh;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -74,6 +75,7 @@ builder.Services.AddScoped<IPlexFactory, PlexFactory>();
 builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
 builder.Services.AddScoped<PlexService>();
 
+builder.Services.AddScoped<TheMovieDbService>();
 builder.Services.AddScoped<ListFilesService>();
 builder.Services.AddScoped<ListVolumesService>();
 

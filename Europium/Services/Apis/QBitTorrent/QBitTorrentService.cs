@@ -24,7 +24,6 @@ public class QBitTorrentService
 			handler.CookieContainer = _cookies;
 			_httpClient = new HttpClient(handler);
 		}
-		
 	}
 	
 	public async Task<bool> IsUpAsync()
