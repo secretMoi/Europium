@@ -7,6 +7,7 @@ public class SshService
     private bool _disposed; // permet de savoir si la connexion a été disposed
 
     private static SshClient client; // contient la connexion
+    private static bool _isConnecting; // contient la connexion
 
     protected SshService(string host, string user, string password, int port = 22)
     {
@@ -18,15 +19,21 @@ public class SshService
 
     protected async Task ConnectAsync()
     {
-        if(!_disposed && client.IsConnected)
+        if((!_disposed && client.IsConnected) || _isConnecting)
             return;
 
         try
         {
-            await Task.Run(() => client.Connect());
+            _isConnecting = true;
+            await Task.Run(() =>
+            {
+                client.Connect();
+                _isConnecting = false;
+            });
         }
-        catch
+        catch(Exception e)
         {
+            Console.WriteLine(e);
         }
     }
 

@@ -59,9 +59,11 @@ public class QBitTorrentService
 	{
 		await LoginAsync(true);
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		// _cookies.Add(new Uri(LoginUrl), _cookies.GetCookies(new Uri(LoginUrl)).First());
 		var response = await _httpClient?.GetAsync(_monitoredApi?.Url + "/api/v2/torrents/info?filter=all", cts.Token)!;
-	       
+
+		if (response.StatusCode == HttpStatusCode.Forbidden)
+			await LoginAsync();
+		
 		return await response.Content.ReadAsAsync<List<TorrentInfo>>(cts.Token);
 	}
 
