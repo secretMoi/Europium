@@ -1,5 +1,4 @@
 ﻿using Europium.Models;
-using Europium.Services.Apis.TheMovieDb.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
@@ -7,8 +6,8 @@ namespace Europium.Services.Apis.TheMovieDb;
 
 public class TheMovieDbService
 {
-	private static HttpClient? _httpClient;
-	private static TheMovieDbConfig? _theMovieDb;
+	protected static HttpClient? _httpClient;
+	protected static TheMovieDbConfig? _theMovieDb;
 	
 	public TheMovieDbService(IOptions<AppConfig> options)
 	{
@@ -16,65 +15,22 @@ public class TheMovieDbService
 		_httpClient ??= new HttpClient(new HttpClientHandler());
 	}
 
-	public async Task<Movie?> GetMovieByNameAsync(string name)
-	{
-		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-
-		var parameters = GetUrlParameter();
-		parameters.Add("query", name);
-		parameters.Add("language", "fr-FR");
-		parameters.Add("include_adult", "false");
-		parameters.Add("page", "1");
-		
-		var response = await _httpClient?.GetAsync(GetCompleteUri("search/movie", parameters), cts.Token)!;
-
-		var movie = (await response.Content.ReadAsAsync<Movies>(cts.Token)).Results.FirstOrDefault();
-
-		if (movie is null) return null;
-
-		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
-		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
-
-		return movie;
-	}
-
-	public async Task<Movie?> GetSerieByNameAsync(string name)
-	{
-		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-
-		var parameters = GetUrlParameter();
-		parameters.Add("query", name);
-		parameters.Add("language", "fr-FR");
-		parameters.Add("include_adult", "false");
-		parameters.Add("page", "1");
-		
-		var response = await _httpClient?.GetAsync(GetCompleteUri("search/tv", parameters), cts.Token)!;
-
-		var movie = (await response.Content.ReadAsAsync<Movies>(cts.Token)).Results.FirstOrDefault();
-
-		if (movie is null) return null;
-
-		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
-		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
-		movie.Title = movie.Name;
-
-		return movie;
-	}
-
 	private string GetUrl(string path)
 	{
 		return _theMovieDb?.ApiUrl + path;
 	}
 
-	private Dictionary<string, string?> GetUrlParameter()
+	protected Dictionary<string, string?> GetUrlParameter()
 	{
 		return new Dictionary<string, string?>
 		{
-			{ "api_key", _theMovieDb?.ApiKey }
+			{ "api_key", _theMovieDb?.ApiKey },
+			{ "language", "fr-FR" },
+			{ "include_adult", "true" }
 		};
 	}
 
-	private Uri GetCompleteUri(string url, IDictionary<string, string?> parameters)
+	protected Uri GetCompleteUri(string url, IDictionary<string, string?> parameters)
 	{
 		return new Uri(QueryHelpers.AddQueryString(GetUrl(url), parameters));
 	}

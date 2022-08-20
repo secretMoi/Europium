@@ -76,6 +76,8 @@ builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
 builder.Services.AddScoped<PlexService>();
 
 builder.Services.AddScoped<TheMovieDbService>();
+builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<SerieService>();
 builder.Services.AddScoped<ListFilesService>();
 builder.Services.AddScoped<ListVolumesService>();
 

@@ -2,7 +2,7 @@
 
 namespace Europium.Services.Apis.TheMovieDb.Models;
 
-public class Movie
+public class Media
 {
 	public int Id { get; set; }
 	
@@ -21,4 +21,6 @@ public class Movie
 	
 	[JsonProperty("backdrop_path")]
 	public string BackdropPath { get; set; } = null!;
+	
+	public List<Season> Seasons { get; set; } = null!;
 }
