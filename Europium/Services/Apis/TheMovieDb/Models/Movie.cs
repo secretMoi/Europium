@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Europium.Services.Apis.TheMovieDb;
+namespace Europium.Services.Apis.TheMovieDb.Models;
 
 public class Movie
 {
@@ -8,6 +8,7 @@ public class Movie
 	
 	public string Title { get; set; } = null!;
 	public string Name { get; set; } = null!;
+	public string Overview { get; set; } = null!;
 	
 	[JsonProperty("vote_average")]
 	public float VoteAverage { get; set; }

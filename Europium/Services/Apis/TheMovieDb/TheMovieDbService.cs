@@ -1,5 +1,5 @@
-﻿using Europium.Dtos;
-using Europium.Models;
+﻿using Europium.Models;
+using Europium.Services.Apis.TheMovieDb.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
@@ -8,7 +8,7 @@ namespace Europium.Services.Apis.TheMovieDb;
 public class TheMovieDbService
 {
 	private static HttpClient? _httpClient;
-	private static Models.TheMovieDb? _theMovieDb;
+	private static TheMovieDbConfig? _theMovieDb;
 	
 	public TheMovieDbService(IOptions<AppConfig> options)
 	{
@@ -22,6 +22,9 @@ public class TheMovieDbService
 
 		var parameters = GetUrlParameter();
 		parameters.Add("query", name);
+		parameters.Add("language", "fr-FR");
+		parameters.Add("include_adult", "false");
+		parameters.Add("page", "1");
 		
 		var response = await _httpClient?.GetAsync(GetCompleteUri("search/movie", parameters), cts.Token)!;
 
@@ -41,6 +44,9 @@ public class TheMovieDbService
 
 		var parameters = GetUrlParameter();
 		parameters.Add("query", name);
+		parameters.Add("language", "fr-FR");
+		parameters.Add("include_adult", "false");
+		parameters.Add("page", "1");
 		
 		var response = await _httpClient?.GetAsync(GetCompleteUri("search/tv", parameters), cts.Token)!;
 

@@ -1,6 +1,6 @@
 ﻿namespace Europium.Models;
 
-public class TheMovieDb
+public class TheMovieDbConfig
 {
 	public string ApiUrl { get; set; } = null!;
 	public string ImageBasePath { get; set; } = null!;

@@ -1,6 +1,4 @@
-﻿using Europium.Dtos;
-
-namespace Europium.Services.Apis.TheMovieDb;
+﻿namespace Europium.Services.Apis.TheMovieDb.Models;
 
 public class Movies
 {

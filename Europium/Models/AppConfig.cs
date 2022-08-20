@@ -10,5 +10,5 @@ public class AppConfig
 	public string ApiToMonitorImagePath { get; set; } = null!;
 	public string ServerUrl { get; set; } = null!;
 	public List<string> AllowedUrls { get; set; } = null!;
-	public TheMovieDb TheMovieDb { get; set; }
+	public TheMovieDbConfig TheMovieDb { get; set; }
 }
