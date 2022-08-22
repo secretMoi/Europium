@@ -25,7 +25,8 @@ public class SerieService : TheMovieDbService
 		if (serie is null) return null;
 
 		var serieById = await GetSerieByIdAsync(serie.Id);
-		
+
+		serie.Link = $"https://www.themoviedb.org/tv/{serie.Id}?language=fr";
 		serie.Seasons = serieById.Seasons;
 		serie.BackdropPath = _theMovieDb?.ImageBasePath + serie.BackdropPath;
 		serie.PosterPath = _theMovieDb?.ImageBasePath + serie.PosterPath;

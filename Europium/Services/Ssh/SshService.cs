@@ -19,8 +19,7 @@ public class SshService
 
     protected async Task ConnectAsync()
     {
-        if((!_disposed && client.IsConnected) || _isConnecting)
-            return;
+        if(IsConnected || _isConnecting) return;
 
         try
         {
@@ -37,17 +36,19 @@ public class SshService
         }
     }
 
-    protected async Task<string> RunCommandAsync(string command)
+    protected async Task<string?> RunCommandAsync(string command)
     {
         return await Task.Run(() =>
         {
-            if (client is not null && !_disposed && client.IsConnected) // si la connexion n'a pas été détruite entre temps
+            if (IsConnected) // si la connexion n'a pas été détruite entre temps
             {
                 // si on a pas été déconnecté entre temps
                 var sc = client.CreateCommand(command);
                 sc.Execute();
                 return sc.Result;
             }
+
+            Console.WriteLine("Ssh not connected");
 
             return null;
         });
@@ -66,5 +67,5 @@ public class SshService
         _disposed = true;
     }
 
-    public bool IsConnected => !_disposed && client.IsConnected;
+    private bool IsConnected => !_disposed && client.IsConnected;
 }

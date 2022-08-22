@@ -14,17 +14,19 @@ public class ListFilesService : SshService
 	{
 	}
 
-	public async Task<List<File>> GetFiles(ListFilesArguments listFilesArguments)
+	public async Task<List<File>?> GetFiles(ListFilesArguments listFilesArguments)
 	{
 		_listFilesArguments = listFilesArguments;
 		
 		await ConnectAsync();
+		
 		var commandResponse = await RunCommandAsync(GetSshCommandToExecute());
+		if (commandResponse is null) return null;
 
 		return ParseCommandResponse(commandResponse);
 	}
 
-	private List<File> ParseCommandResponse(string commandResponse)
+	private List<File>? ParseCommandResponse(string commandResponse)
 	{
 		var lines = commandResponse.Split('\n').SkipLast(1); // casse la chaine en lignes
 		

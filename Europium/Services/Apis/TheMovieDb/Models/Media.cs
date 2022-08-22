@@ -9,6 +9,7 @@ public class Media
 	public string Title { get; set; } = null!;
 	public string Name { get; set; } = null!;
 	public string Overview { get; set; } = null!;
+	public string Link { get; set; } = null!;
 	
 	[JsonProperty("vote_average")]
 	public float VoteAverage { get; set; }

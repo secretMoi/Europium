@@ -24,6 +24,7 @@ public class MovieService : TheMovieDbService
 
 		if (movie is null) return null;
 
+		movie.Link = $"https://www.themoviedb.org/movie/{movie.Id}?language=fr";
 		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
 		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
 

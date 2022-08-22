@@ -16,10 +16,11 @@ public class ListVolumesService : SshService
 	{
 	}
 
-	public async Task<List<FileSystem>> GetFileSystemsAsync()
+	public async Task<List<FileSystem>?> GetFileSystemsAsync()
 	{
 		await ConnectAsync();
 		var result = await RunCommandAsync("df -h");
+		if (result is null) return null;
 
 		return ParseSshResponse(result);
 	}

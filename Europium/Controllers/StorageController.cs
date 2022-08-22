@@ -1,6 +1,7 @@
 ﻿using Europium.Dtos;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
+using File = Europium.Dtos.File;
 
 namespace Europium.Controllers;
 
@@ -22,10 +23,8 @@ public class StorageController : ControllerBase
 	{
 		var volumes = await _listVolumesService.GetFileSystemsAsync();
 
-		if (volumes.Count == 0)
-		{
+		if (volumes is null || volumes.Count == 0)
 			return NotFound();
-		}
 
 		return Ok(volumes);
 	}
@@ -35,10 +34,8 @@ public class StorageController : ControllerBase
 	{
 		var files = await _listFilesService.GetFiles(listFilesArguments);
 		
-		if (files.Count == 0)
-		{
+		if (files is null || files.Count == 0)
 			return NotFound();
-		}
 
 		return Ok(files);
 	}
