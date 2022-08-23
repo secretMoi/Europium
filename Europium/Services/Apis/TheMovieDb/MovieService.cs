@@ -6,8 +6,11 @@ namespace Europium.Services.Apis.TheMovieDb;
 
 public class MovieService : TheMovieDbService
 {
-	public MovieService(IOptions<AppConfig> options) : base(options)
+	private readonly RadarrService _radarrService;
+
+	public MovieService(IOptions<AppConfig> options, RadarrService radarrService) : base(options)
 	{
+		_radarrService = radarrService;
 	}
 	
 	public async Task<Media?> GetMovieByNameAsync(string name)
@@ -27,6 +30,7 @@ public class MovieService : TheMovieDbService
 		movie.Link = $"https://www.themoviedb.org/movie/{movie.Id}?language=fr";
 		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
 		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
+		movie.RadarrInformation = await _radarrService.GetMovieByTmdbIdAsync(movie.Id);
 
 		return movie;
 	}

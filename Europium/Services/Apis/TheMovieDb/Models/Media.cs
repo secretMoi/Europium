@@ -2,7 +2,7 @@
 
 namespace Europium.Services.Apis.TheMovieDb.Models;
 
-public class Media
+public record Media
 {
 	public int Id { get; set; }
 	
@@ -10,6 +10,7 @@ public class Media
 	public string Name { get; set; } = null!;
 	public string Overview { get; set; } = null!;
 	public string Link { get; set; } = null!;
+	public string FileLinkInApi { get; set; } = null!;
 	
 	[JsonProperty("vote_average")]
 	public float VoteAverage { get; set; }
@@ -24,4 +25,6 @@ public class Media
 	public string BackdropPath { get; set; } = null!;
 	
 	public List<Season> Seasons { get; set; } = null!;
+
+	public RadarrInformation? RadarrInformation { get; set; }
 }
