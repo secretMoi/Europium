@@ -53,4 +53,18 @@ public class SerieService : TheMovieDbService
 
 		return serie;
 	}
+	
+	public async Task<SerieIdLinkToOtherApi?> GetSerieIdLinkAsync(int serieId)
+	{
+		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
+
+		var url = GetCompleteUri(
+			$"3/tv/{serieId}/external_ids",
+			GetUrlParameter()
+			);
+		
+		var response = await _httpClient?.GetAsync(url, cts.Token)!;
+
+		return await response.Content.ReadAsAsync<SerieIdLinkToOtherApi>(cts.Token);
+	}
 }
