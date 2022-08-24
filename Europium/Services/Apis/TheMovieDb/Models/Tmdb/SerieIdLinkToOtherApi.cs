@@ -1,17 +1,17 @@
 ﻿using Newtonsoft.Json;
 
-namespace Europium.Services.Apis.TheMovieDb.Models;
+namespace Europium.Services.Apis.TheMovieDb.Models.Tmdb;
 
 public class SerieIdLinkToOtherApi
 {
 	[JsonProperty("imdb_id")]
-	public string ImdbId { get; set; }
+	public string ImdbId { get; set; } = null!;
 
 	[JsonProperty("freebase_mid")]
-	public string FreebaseMid { get; set; }
+	public string FreebaseMid { get; set; } = null!;
 
 	[JsonProperty("freebase_id")]
-	public string FreebaseId { get; set; }
+	public string FreebaseId { get; set; } = null!;
 
 	[JsonProperty("tvdb_id")]
 	public int TvdbId { get; set; }
@@ -20,13 +20,13 @@ public class SerieIdLinkToOtherApi
 	public int? TvrageId { get; set; }
 
 	[JsonProperty("facebook_id")]
-	public string FacebookId { get; set; }
+	public string FacebookId { get; set; } = null!;
 
 	[JsonProperty("instagram_id")]
-	public string InstagramId { get; set; }
+	public string InstagramId { get; set; } = null!;
 
 	[JsonProperty("twitter_id")]
-	public string TwitterId { get; set; }
+	public string TwitterId { get; set; } = null!;
 
 	[JsonProperty("id")]
 	public int Id { get; set; }

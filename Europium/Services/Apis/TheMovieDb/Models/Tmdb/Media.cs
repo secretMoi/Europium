@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Europium.Services.Apis.TheMovieDb.Models.Radarr;
+using Europium.Services.Apis.TheMovieDb.Models.Sonarr;
+using Newtonsoft.Json;
 
-namespace Europium.Services.Apis.TheMovieDb.Models;
+namespace Europium.Services.Apis.TheMovieDb.Models.Tmdb;
 
 public record Media
 {
@@ -27,4 +29,5 @@ public record Media
 	public List<Season> Seasons { get; set; } = null!;
 
 	public RadarrInformation? RadarrInformation { get; set; }
+	public SonarrInformation? SonarrInformation { get; set; }
 }

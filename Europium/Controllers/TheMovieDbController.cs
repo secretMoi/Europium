@@ -36,10 +36,10 @@ public class TheMovieDbController : ControllerBase
 		return Ok(serie);
 	}
 	
-	[HttpGet("serie/{serieId}/links")]
-	public async Task<IActionResult> GetSerieLinksBySerieId(int serieId)
+	[HttpGet("serie/{tmdbId}/links")]
+	public async Task<IActionResult> GetSerieLinksBySerieId(int tmdbId)
 	{
-		var serie = await _serieService.GetSerieIdLinkAsync(serieId);
+		var serie = await _serieService.GetSerieIdLinkAsync(tmdbId);
 		
 		if (serie is null) return NotFound();
 		

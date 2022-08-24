@@ -1,4 +1,4 @@
-﻿namespace Europium.Services.Apis.TheMovieDb.Models;
+﻿namespace Europium.Services.Apis.TheMovieDb.Models.Radarr;
 
 public class AlternateTitle
 {

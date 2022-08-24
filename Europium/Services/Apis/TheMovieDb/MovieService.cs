@@ -1,5 +1,6 @@
 ﻿using Europium.Models;
 using Europium.Services.Apis.TheMovieDb.Models;
+using Europium.Services.Apis.TheMovieDb.Models.Tmdb;
 using Microsoft.Extensions.Options;
 
 namespace Europium.Services.Apis.TheMovieDb;
