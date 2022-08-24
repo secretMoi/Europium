@@ -2,8 +2,8 @@
 
 public class Image
 {
-    public string CoverType { get; set; }
-    public string Url { get; set; }
+    public string CoverType { get; set; } = null!;
+    public string Url { get; set; } = null!;
 }
 
 public class Ratings
@@ -14,17 +14,17 @@ public class Ratings
 
 public class SonarrInformation
 {
-    public string FileLink { get; set; }
-    public string Title { get; set; }
-    public string SortTitle { get; set; }
+    public string FileLink { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string SortTitle { get; set; } = null!;
     public int SeasonCount { get; set; }
-    public string Status { get; set; }
-    public string Overview { get; set; }
-    public string Network { get; set; }
-    public string AirTime { get; set; }
-    public List<Image> Images { get; set; }
-    public string RemotePoster { get; set; }
-    public List<Season> Seasons { get; set; }
+    public string Status { get; set; } = null!;
+    public string Overview { get; set; } = null!;
+    public string Network { get; set; } = null!;
+    public string AirTime { get; set; } = null!;
+    public List<Image> Images { get; set; } = null!;
+    public string RemotePoster { get; set; } = null!;
+    public List<Season> Seasons { get; set; } = null!;
     public int Year { get; set; }
     public int ProfileId { get; set; }
     public bool SeasonFolder { get; set; }
@@ -35,15 +35,15 @@ public class SonarrInformation
     public int TvRageId { get; set; }
     public int TvMazeId { get; set; }
     public DateTime FirstAired { get; set; }
-    public string SeriesType { get; set; }
-    public string CleanTitle { get; set; }
-    public string ImdbId { get; set; }
-    public string TitleSlug { get; set; }
-    public string Certification { get; set; }
-    public List<string> Genres { get; set; }
-    public List<object> Tags { get; set; }
+    public string SeriesType { get; set; } = null!;
+    public string CleanTitle { get; set; } = null!;
+    public string ImdbId { get; set; } = null!;
+    public string TitleSlug { get; set; } = null!;
+    public string Certification { get; set; } = null!;
+    public List<string> Genres { get; set; } = null!;
+    public List<object> Tags { get; set; } = null!;
     public DateTime Added { get; set; }
-    public Ratings Ratings { get; set; }
+    public Ratings Ratings { get; set; } = null!;
     public int QualityProfileId { get; set; }
 }
 

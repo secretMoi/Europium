@@ -1,6 +1,5 @@
 ﻿using Europium.Models;
 using Europium.Repositories;
-using Europium.Services.Apis.TheMovieDb.Models;
 using Europium.Services.Apis.TheMovieDb.Models.Sonarr;
 
 namespace Europium.Services.Apis;

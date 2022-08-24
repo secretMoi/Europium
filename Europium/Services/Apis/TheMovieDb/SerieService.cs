@@ -1,5 +1,4 @@
 ﻿using Europium.Models;
-using Europium.Services.Apis.TheMovieDb.Models;
 using Europium.Services.Apis.TheMovieDb.Models.Tmdb;
 using Microsoft.Extensions.Options;
 
@@ -43,7 +42,7 @@ public class SerieService : TheMovieDbService
 		return serie;
 	}
 
-	public async Task<SerieById> GetSerieByIdAsync(int serieId)
+	private async Task<SerieById> GetSerieByIdAsync(int serieId)
 	{
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
 
