@@ -50,7 +50,7 @@ public class LastEpisodeToAir
     public string ProductionCode { get; set; }
 
     [JsonProperty("runtime")]
-    public int Runtime { get; set; }
+    public int? Runtime { get; set; }
 
     [JsonProperty("seasonseason_number")]
     public int SeasonNumber { get; set; }
