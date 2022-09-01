@@ -12,6 +12,7 @@ public class MonitorService
 	private readonly SonarrService _sonarrService;
 	private readonly JackettService _jackettService;
 	private readonly QBitTorrentService _qBitTorrentService;
+	private readonly TautulliService _tautulliService;
 	private readonly PlexService _plexService;
 
 	private readonly ApisToMonitorRepository _monitorRepository;
@@ -20,7 +21,7 @@ public class MonitorService
 
 	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot,
 		ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService,
-		JackettService jackettService, QBitTorrentService qBitTorrentService)
+		JackettService jackettService, QBitTorrentService qBitTorrentService, TautulliService tautulliService)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
@@ -28,6 +29,7 @@ public class MonitorService
 		_plexService = plexService;
 		_jackettService = jackettService;
 		_qBitTorrentService = qBitTorrentService;
+		_tautulliService = tautulliService;
 		AppConfig = optionsSnapshot.Value;
 	}
 
@@ -57,6 +59,11 @@ public class MonitorService
 		if (ApiCode.QBITTORRENT.Equals(code))
 		{
 			return await _qBitTorrentService.IsUpAsync();
+		}
+
+		if (ApiCode.TAUTULLI.Equals(code))
+		{
+			return await _tautulliService.IsUpAsync(url);
 		}
 
 		return null;
