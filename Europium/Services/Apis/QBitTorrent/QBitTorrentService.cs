@@ -55,7 +55,7 @@ public class QBitTorrentService
 		return httpResponse.IsSuccessStatusCode && responseBody.Contains("Ok");
 	}
 	
-	public async Task<List<TorrentInfo>> GetAllAsync()
+	public async Task<List<TorrentInfo>?> GetAllAsync()
 	{
 		await LoginAsync(true);
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
@@ -63,6 +63,9 @@ public class QBitTorrentService
 
 		if (response.StatusCode == HttpStatusCode.Forbidden)
 			await LoginAsync();
+
+		if (!response.IsSuccessStatusCode)
+			return null;
 		
 		return await response.Content.ReadAsAsync<List<TorrentInfo>>(cts.Token);
 	}

@@ -1,7 +1,6 @@
 ﻿using Europium.Dtos;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
-using File = Europium.Dtos.File;
 
 namespace Europium.Controllers;
 

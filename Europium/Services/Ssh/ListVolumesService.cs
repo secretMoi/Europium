@@ -8,7 +8,7 @@ public class ListVolumesService : SshService
 {
 	private enum Colonnes
 	{
-		Total = 1, Utilise = 2, Libre = 3, Utilisation = 4, Nom = 5
+		Total = 1, Used = 2, Free = 3, PercentageUsed = 4, Name = 5
 	}
 
 	public ListVolumesService(IOptions<AppConfig> optionsSnapshot)
@@ -49,19 +49,19 @@ public class ListVolumesService : SshService
 			{
 				fileSystem.Size = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Utilise))
+			else if (ValidColumn(idColonne, Colonnes.Used))
 			{
 				fileSystem.Used = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Utilisation))
+			else if (ValidColumn(idColonne, Colonnes.PercentageUsed))
 			{
 				fileSystem.PercentageUsed = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Nom))
+			else if (ValidColumn(idColonne, Colonnes.Name))
 			{
 				fileSystem.Volume = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Libre))
+			else if (ValidColumn(idColonne, Colonnes.Free))
 			{
 				fileSystem.Available = item;
 			}
