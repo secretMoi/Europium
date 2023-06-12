@@ -1,9 +1,11 @@
 using Europium;
+using Europium.Mappers;
 using Europium.Models;
 using Europium.Repositories;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
+using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -67,6 +69,8 @@ var apiOptions = new ClientOptions
 	Version = "v1"
 };
 builder.Services.AddSingleton(apiOptions);
+builder.Services.AddScoped<SizeMapper>();
+
 builder.Services.AddScoped<IPlexServerClient, PlexServerClient>();
 builder.Services.AddScoped<IPlexAccountClient, PlexAccountClient>();
 builder.Services.AddScoped<IPlexLibraryClient, PlexLibraryClient>();
@@ -80,6 +84,7 @@ builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<SerieService>();
 builder.Services.AddScoped<ListFilesService>();
 builder.Services.AddScoped<ListVolumesService>();
+builder.Services.AddScoped<LocalDrivesService>();
 
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();

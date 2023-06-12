@@ -1,4 +1,5 @@
 ﻿using Europium.Dtos;
+using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +11,20 @@ public class StorageController : ControllerBase
 {
 	private readonly ListVolumesService _listVolumesService;
 	private readonly ListFilesService _listFilesService;
+	private readonly LocalDrivesService _localDrivesService;
 
-	public StorageController(ListVolumesService listVolumesService, ListFilesService listFilesService)
+	public StorageController(ListVolumesService listVolumesService, ListFilesService listFilesService, LocalDrivesService localDrivesService)
 	{
 		_listVolumesService = listVolumesService;
 		_listFilesService = listFilesService;
+		_localDrivesService = localDrivesService;
 	}
 	
 	[HttpGet("filesystems")]
 	public async Task<IActionResult> GetFileSystems()
 	{
 		var volumes = await _listVolumesService.GetFileSystemsAsync();
+		volumes?.AddRange(_localDrivesService.GetLocalDrives());
 
 		if (volumes is null || volumes.Count == 0)
 			return NotFound();
