@@ -20,7 +20,8 @@ public class LocalDrivesService
 			PercentageUsed = (int)((float)(driveInfo.TotalSize - driveInfo.TotalFreeSpace) / driveInfo.TotalSize * 100) + "%",
 			Available = _sizeMapper.ByteToValue(driveInfo.TotalFreeSpace, SizeMapper.SizeUnits.TB) + "T",
 			Used = _sizeMapper.ByteToValue(driveInfo.TotalSize - driveInfo.TotalFreeSpace, SizeMapper.SizeUnits.TB) + "T",
-			Volume = driveInfo.Name + driveInfo.VolumeLabel
+			Volume = driveInfo.Name + driveInfo.VolumeLabel,
+			IsLocal = true
 		}).ToList();
 	}
 }

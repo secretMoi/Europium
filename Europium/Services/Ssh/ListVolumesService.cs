@@ -69,6 +69,8 @@ public class ListVolumesService : SshService
 			compteurColonne++;
 		}
 
+		fileSystem.IsLocal = false;
+
 		return fileSystem;
 	}
 

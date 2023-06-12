@@ -7,4 +7,5 @@ public class FileSystem
 	public string? Available { get; set; }
 	public string? PercentageUsed { get; set; }
 	public string? Volume { get; set; }
+	public bool IsLocal { get; set; }
 }
