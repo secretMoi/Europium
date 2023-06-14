@@ -47,11 +47,11 @@ public class ListVolumesService : SshService
 
 			if (ValidColumn(columnId, Column.Total))
 			{
-				fileSystem.Size = item;
+				fileSystem.Size = long.Parse(item);
 			}
 			else if (ValidColumn(columnId, Column.Used))
 			{
-				fileSystem.Used = item;
+				fileSystem.Used = long.Parse(item);
 			}
 			else if (ValidColumn(columnId, Column.PercentageUsed))
 			{
@@ -63,7 +63,7 @@ public class ListVolumesService : SshService
 			}
 			else if (ValidColumn(columnId, Column.Free))
 			{
-				fileSystem.Available = item;
+				fileSystem.Available = long.Parse(item);
 			}
 
 			columnIndex++;
