@@ -1,11 +1,12 @@
-﻿using Europium.Dtos;
-using Europium.Mappers;
+﻿using System.Diagnostics;
+using Europium.Dtos;
+using File = Europium.Dtos.File;
 
 namespace Europium.Services.LocalDrives;
 
 public class LocalDrivesService
 {
-	public List<FileSystem> GetLocalDrives()
+	public IEnumerable<FileSystem> GetLocalDrives()
 	{
 		return DriveInfo.GetDrives().Select(driveInfo => new FileSystem
 		{
@@ -15,6 +16,42 @@ public class LocalDrivesService
 			Used = driveInfo.TotalSize - driveInfo.TotalFreeSpace,
 			Volume = driveInfo.Name + driveInfo.VolumeLabel,
 			IsLocal = true
-		}).ToList();
+		});
+	}
+
+	public async Task<IEnumerable<File>> GetFiles(ListFilesArguments listFilesArguments)
+	{
+		var commandResult = await ExecuteGetFilesCommand(listFilesArguments);
+		var fileLines = FormatGetFilesCommandReturn(commandResult);
+		return fileLines.Select(CreateFile);
+	}
+
+	private async Task<string> ExecuteGetFilesCommand(ListFilesArguments listFilesArguments)
+	{
+		using var app = new Process();
+		app.StartInfo.FileName = "powershell.exe";
+		app.StartInfo.Arguments = $"Get-ChildItem -File -Recurse | Sort-Object -Property Length -Descending | Select-Object -Property Length, Name -first {listFilesArguments.Limit}";
+		app.EnableRaisingEvents = true;
+		app.StartInfo.RedirectStandardOutput = true;
+		app.StartInfo.RedirectStandardError = true;
+		app.StartInfo.UseShellExecute = false; // Must not set true to execute PowerShell command
+		app.Start();
+		using var standardOutput = app.StandardOutput;
+		return await standardOutput.ReadToEndAsync();
+	}
+
+	private IEnumerable<string> FormatGetFilesCommandReturn(string commandResult)
+	{
+		return commandResult
+			.Split("\r\n")
+			.Skip(3)
+			.Where(file => file != string.Empty)
+			.Select(file => file.Trim());
+	}
+
+	private File CreateFile(string fileLine)
+	{
+		var fileInformation = fileLine.Split(new[] { ' ' }, 2);
+		return new File(fileInformation[1], long.Parse(fileInformation[0]));
 	}
 }

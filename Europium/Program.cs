@@ -82,7 +82,7 @@ builder.Services.AddScoped<PlexService>();
 builder.Services.AddScoped<TheMovieDbService>();
 builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<SerieService>();
-builder.Services.AddScoped<ListFilesService>();
+builder.Services.AddScoped<SshListFiles>();
 builder.Services.AddScoped<ListVolumesService>();
 builder.Services.AddScoped<LocalDrivesService>();
 

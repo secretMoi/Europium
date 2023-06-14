@@ -5,11 +5,11 @@ using File = Europium.Dtos.File;
 
 namespace Europium.Services.Ssh;
 
-public class ListFilesService : SshService
+public class SshListFiles : SshService
 {
 	private ListFilesArguments? _listFilesArguments;
 	
-	public ListFilesService(IOptions<AppConfig> optionsSnapshot)
+	public SshListFiles(IOptions<AppConfig> optionsSnapshot)
 		: base(optionsSnapshot.Value.SshHost, optionsSnapshot.Value.SshUser, optionsSnapshot.Value.SshPassword, optionsSnapshot.Value.SshPort)
 	{
 	}
@@ -26,7 +26,7 @@ public class ListFilesService : SshService
 		return ParseCommandResponse(commandResponse);
 	}
 
-	private List<File>? ParseCommandResponse(string commandResponse)
+	private List<File> ParseCommandResponse(string commandResponse)
 	{
 		var lines = commandResponse.Split('\n').SkipLast(1); // casse la chaine en lignes
 		

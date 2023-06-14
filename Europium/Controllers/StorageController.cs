@@ -2,6 +2,7 @@
 using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Mvc;
+using File = Europium.Dtos.File;
 
 namespace Europium.Controllers;
 
@@ -10,13 +11,13 @@ namespace Europium.Controllers;
 public class StorageController : ControllerBase
 {
 	private readonly ListVolumesService _listVolumesService;
-	private readonly ListFilesService _listFilesService;
+	private readonly SshListFiles _sshListFiles;
 	private readonly LocalDrivesService _localDrivesService;
 
-	public StorageController(ListVolumesService listVolumesService, ListFilesService listFilesService, LocalDrivesService localDrivesService)
+	public StorageController(ListVolumesService listVolumesService, SshListFiles sshListFiles, LocalDrivesService localDrivesService)
 	{
 		_listVolumesService = listVolumesService;
-		_listFilesService = listFilesService;
+		_sshListFiles = sshListFiles;
 		_localDrivesService = localDrivesService;
 	}
 	
@@ -33,10 +34,12 @@ public class StorageController : ControllerBase
 	[HttpPost("files")]
 	public async Task<IActionResult> GetFilesFromPath([FromBody]ListFilesArguments listFilesArguments)
 	{
-		var files = await _listFilesService.GetFiles(listFilesArguments);
+		IEnumerable<File> files = new List<File>();
 		
-		if (files is null || files.Count == 0)
-			return NotFound();
+		if(!listFilesArguments.IsLocal)
+			files = await _sshListFiles.GetFiles(listFilesArguments) ?? new List<File>();
+		if(listFilesArguments.IsLocal)
+			files = await _localDrivesService.GetFiles(listFilesArguments);
 
 		return Ok(files);
 	}
