@@ -61,11 +61,10 @@ public class LocalDrivesService
         string command;
         if (listFilesArguments.FileType == FileType.File)
             command =
-                $"Get-ChildItem -File -Recurse | Sort-Object -Property Length -Descending | Select-Object -Property Length, Name -first {listFilesArguments.Limit}";
+                $"Get-ChildItem -Path {listFilesArguments.Path} -File -Recurse | Sort-Object -Property Length -Descending | Select-Object -Property Length, Name -first {listFilesArguments.Limit}";
         else
             command =
-                "$fso = new-object -com Scripting.FileSystemObject; Get-ChildItem -Directory -Recurse | Select-Object @{l='Size'; e={$fso.GetFolder($_.FullName).Size}},FullName | Sort-Object Size -Descending | Select-Object -first " +
-                listFilesArguments.Limit;
+                $"$fso = new-object -com Scripting.FileSystemObject; Get-ChildItem -Path {listFilesArguments.Path} -Directory -Recurse | Select-Object @{{l='Size'; e={{$fso.GetFolder($_.FullName).Size}}}},FullName | Sort-Object Size -Descending | Select-Object -first {listFilesArguments.Limit}";
 
         return command;
     }
