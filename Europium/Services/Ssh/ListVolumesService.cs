@@ -6,7 +6,7 @@ namespace Europium.Services.Ssh;
 
 public class ListVolumesService : SshService
 {
-	private enum Colonnes
+	private enum Column
 	{
 		Total = 1, Used = 2, Free = 3, PercentageUsed = 4, Name = 5
 	}
@@ -34,39 +34,39 @@ public class ListVolumesService : SshService
 		return lines.Select(ParseBySpace).ToList();
 	}
 
-	private FileSystem ParseBySpace(string ligne)
+	private FileSystem ParseBySpace(string line)
 	{
-		int compteurColonne = 0; // renvoie le n° de la colonne actuel
+		int columnIndex = 0; // renvoie le n° de la colonne actuel
 
 		var fileSystem = new FileSystem();
 
 		// split en colonne par espace
-		foreach (string item in ligne.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries))
+		foreach (string item in line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries))
 		{
-			var idColonne = compteurColonne % 6; // permet d'identifier la colonne
+			var columnId = columnIndex % 6; // permet d'identifier la colonne
 
-			if (ValidColumn(idColonne, Colonnes.Total))
+			if (ValidColumn(columnId, Column.Total))
 			{
 				fileSystem.Size = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Used))
+			else if (ValidColumn(columnId, Column.Used))
 			{
 				fileSystem.Used = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.PercentageUsed))
+			else if (ValidColumn(columnId, Column.PercentageUsed))
 			{
 				fileSystem.PercentageUsed = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Name))
+			else if (ValidColumn(columnId, Column.Name))
 			{
 				fileSystem.Volume = item;
 			}
-			else if (ValidColumn(idColonne, Colonnes.Free))
+			else if (ValidColumn(columnId, Column.Free))
 			{
 				fileSystem.Available = item;
 			}
 
-			compteurColonne++;
+			columnIndex++;
 		}
 
 		fileSystem.IsLocal = false;
@@ -75,8 +75,8 @@ public class ListVolumesService : SshService
 	}
 
 	// si la colonne est sélectionnée et que son id correspond
-	private bool ValidColumn(int id, Colonnes colonne)
+	private bool ValidColumn(int id, Column column)
 	{
-		return id == (int) colonne;
+		return id == (int) column;
 	}
 }

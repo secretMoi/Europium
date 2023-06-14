@@ -23,11 +23,9 @@ public class StorageController : ControllerBase
 	[HttpGet("filesystems")]
 	public async Task<IActionResult> GetFileSystems()
 	{
-		var volumes = await _listVolumesService.GetFileSystemsAsync();
-		volumes?.AddRange(_localDrivesService.GetLocalDrives()); 
-
-		if (volumes is null || volumes.Count == 0)
-			return NotFound();
+		List<FileSystem> volumes = new List<FileSystem>();
+		volumes.AddRange(await _listVolumesService.GetFileSystemsAsync() ?? new List<FileSystem>());
+		volumes.AddRange(_localDrivesService.GetLocalDrives());
 
 		return Ok(volumes);
 	}

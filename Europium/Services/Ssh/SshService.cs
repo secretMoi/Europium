@@ -6,13 +6,16 @@ public class SshService
 {
     private bool _disposed; // permet de savoir si la connexion a été disposed
 
-    private static SshClient client; // contient la connexion
-    private static bool _isConnecting; // contient la connexion
+    private static SshClient? _client; // contient la connexion
+    private static bool _isConnecting;
 
     protected SshService(string host, string user, string password, int port = 22)
     {
-        if(client is null)
-            client = new SshClient(host, port, user, password);
+        if(_client is null)
+        {
+            _client = new SshClient(host, port, user, password);
+            _client.ConnectionInfo.Timeout = TimeSpan.FromSeconds(5);
+        }
 
         _disposed = false;
     }
@@ -26,7 +29,7 @@ public class SshService
             _isConnecting = true;
             await Task.Run(() =>
             {
-                client.Connect();
+                _client?.Connect();
                 _isConnecting = false;
             });
         }
@@ -40,10 +43,10 @@ public class SshService
     {
         return await Task.Run(() =>
         {
-            if (IsConnected) // si la connexion n'a pas été détruite entre temps
+            if (IsConnected && _client is not null) // si la connexion n'a pas été détruite entre temps
             {
                 // si on a pas été déconnecté entre temps
-                var sc = client.CreateCommand(command);
+                var sc = _client.CreateCommand(command);
                 sc.Execute();
                 return sc.Result;
             }
@@ -56,16 +59,16 @@ public class SshService
 
     private void Close()
     {
-        if (!_disposed && client.IsConnected)
-            client.Disconnect();
+        if (!_disposed && _client is not null && _client.IsConnected)
+            _client.Disconnect();
     }
 
     public void Dispose()
     {
-        client.Dispose();
+        _client?.Dispose();
 
         _disposed = true;
     }
 
-    private bool IsConnected => !_disposed && client.IsConnected;
+    private bool IsConnected => !_disposed && _client is not null && _client.IsConnected;
 }
