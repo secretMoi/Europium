@@ -19,7 +19,7 @@ public class ListVolumesService : SshService
 	public async Task<List<FileSystem>?> GetFileSystemsAsync()
 	{
 		await ConnectAsync();
-		var result = await RunCommandAsync("df -h");
+		var result = await RunCommandAsync("df");
 		if (result is null) return null;
 
 		return ParseSshResponse(result);
