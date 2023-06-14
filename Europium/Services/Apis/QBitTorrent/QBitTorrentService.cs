@@ -8,10 +8,10 @@ namespace Europium.Services.Apis.QBitTorrent;
 public class QBitTorrentService
 {
 	private static ApiToMonitor? _monitoredApi;
-	
+
 	private static HttpClient? _httpClient;
 	private static CookieContainer? _cookies;
-	
+
 	public QBitTorrentService(ApisToMonitorRepository apisToMonitorRepository)
 	{
 		_monitoredApi ??= apisToMonitorRepository.GetApiByCode(ApiCode.QBITTORRENT);
@@ -25,7 +25,7 @@ public class QBitTorrentService
 			_httpClient = new HttpClient(handler);
 		}
 	}
-	
+
 	public async Task<bool> IsUpAsync()
 	{
 		try
@@ -41,23 +41,24 @@ public class QBitTorrentService
 	private async Task<bool> LoginAsync(bool skipLoginIfAlreadyLogged = false)
 	{
 		if (_cookies?.Count > 0 && skipLoginIfAlreadyLogged) return true;
-		
+
 		var logins = new List<KeyValuePair<string, string>>
 		{
 			new("username", _monitoredApi?.UserName ?? string.Empty),
 			new("password", _monitoredApi?.Password ?? string.Empty)
 		};
 
-		var req = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/auth/login") { Content = new FormUrlEncodedContent(logins) };
+		var req = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/auth/login")
+			{ Content = new FormUrlEncodedContent(logins) };
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
 		var httpResponse = await _httpClient?.SendAsync(req, cts.Token)!;
 		var responseBody = await httpResponse.Content.ReadAsStringAsync(cts.Token);
 		return httpResponse.IsSuccessStatusCode && responseBody.Contains("Ok");
 	}
-	
+
 	public async Task<List<TorrentInfo>?> GetAllAsync()
 	{
-		await LoginAsync(true);
+		await LoginAsync();
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
 		var response = await _httpClient?.GetAsync(_monitoredApi?.Url + "/api/v2/torrents/info?filter=all", cts.Token)!;
 
@@ -66,16 +67,26 @@ public class QBitTorrentService
 
 		if (!response.IsSuccessStatusCode)
 			return null;
-		
+
 		return await response.Content.ReadAsAsync<List<TorrentInfo>>(cts.Token);
 	}
 
 	public async Task<bool> DeleteTorrentAsync(string torrentHash)
 	{
-		await LoginAsync(true);
+		await LoginAsync();
 		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		await _httpClient?.GetAsync(_monitoredApi?.Url + $"/api/v2/torrents/delete?hashes={torrentHash}&deleteFiles=false", cts.Token)!;
+		var formContent = new FormUrlEncodedContent(new[]
+		{
+			new KeyValuePair<string, string>("hashes", torrentHash), 
+			new KeyValuePair<string, string>("deleteFiles", "false") 
+		});
+		
+		var httpResponseMessage = await _httpClient?.PostAsync(
+			_monitoredApi?.Url + "/api/v2/torrents/delete",
+			formContent,
+			cts.Token
+		)!;
 
-		return true;
+		return httpResponseMessage.IsSuccessStatusCode;
 	}
 }
