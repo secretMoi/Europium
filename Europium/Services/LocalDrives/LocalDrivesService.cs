@@ -16,7 +16,7 @@ public class LocalDrivesService
 	{
 		return DriveInfo.GetDrives().Select(driveInfo => new FileSystem
 		{
-			Size = _sizeMapper.ByteToValue(driveInfo.TotalSize, SizeMapper.SizeUnits.TB) + "T",
+			Size = _sizeMapper.ByteToValue(driveInfo.TotalSize, SizeMapper.SizeUnits.TB) + "T", 
 			PercentageUsed = (int)((float)(driveInfo.TotalSize - driveInfo.TotalFreeSpace) / driveInfo.TotalSize * 100) + "%",
 			Available = _sizeMapper.ByteToValue(driveInfo.TotalFreeSpace, SizeMapper.SizeUnits.TB) + "T",
 			Used = _sizeMapper.ByteToValue(driveInfo.TotalSize - driveInfo.TotalFreeSpace, SizeMapper.SizeUnits.TB) + "T",
