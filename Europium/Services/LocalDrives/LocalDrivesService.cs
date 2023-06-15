@@ -30,12 +30,14 @@ public class LocalDrivesService
     private async Task<string> ExecuteGetFilesCommand(ListFilesArguments listFilesArguments)
     {
         using var app = new Process();
+        using var cancellationTokenSource = new CancellationTokenSource(new TimeSpan(0, 1, 0));
         app.StartInfo.FileName = "powershell.exe";
         app.StartInfo.Arguments = GetGetFilesCommand(listFilesArguments);
         app.EnableRaisingEvents = true;
         app.StartInfo.RedirectStandardOutput = true;
         app.StartInfo.RedirectStandardError = true;
         app.StartInfo.UseShellExecute = false; // Must not set true to execute PowerShell command
+        await app.WaitForExitAsync(cancellationTokenSource.Token);
         app.Start();
         using var standardOutput = app.StandardOutput;
         return await standardOutput.ReadToEndAsync();
