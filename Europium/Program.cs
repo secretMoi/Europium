@@ -5,6 +5,7 @@ using Europium.Repositories;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
+using Europium.Services.Apis.YggTorrent;
 using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.EntityFrameworkCore;
@@ -93,6 +94,7 @@ builder.Services.AddScoped<QBitTorrentService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
 builder.Services.AddScoped<TautulliService>();
+builder.Services.AddScoped<YggTorrentService>();
 
 
 
