@@ -14,7 +14,7 @@ jobs:
     environment: Prod
     steps:
     - uses: actions/checkout@v3
-    - run: New-Item -Name appconfig.json -ItemType File
-    - run: (echo '${{ secrets.CONFIG }}') > appconfig.json
+    - run: New-Item -Name Europium\bin\Release\net6.0\appconfig.json -ItemType File
+    - run: (echo '${{ secrets.CONFIG }}') > Europium\bin\Release\net6.0\appconfig.json
     - run: dotnet build --configuration Release .\Europium.sln
     
