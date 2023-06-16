@@ -17,4 +17,6 @@ jobs:
     - run: dotnet build --configuration Release .\Europium.sln
     - run: New-Item -Name Europium\bin\Release\net6.0\appconfig.json -ItemType File
     - run: (echo '${{ secrets.CONFIG }}') > Europium\bin\Release\net6.0\appconfig.json
+    - run: taskkill /IM Europium.exe /F
+    - run: start "Europium server" Europium\bin\Release\net6.0\Europium.exe --urls=http://localhost:1010
     
