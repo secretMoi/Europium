@@ -2,6 +2,7 @@ using Europium;
 using Europium.Mappers;
 using Europium.Models;
 using Europium.Repositories;
+using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
@@ -80,9 +81,15 @@ builder.Services.AddScoped<IPlexFactory, PlexFactory>();
 builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
 builder.Services.AddScoped<PlexService>();
 
+builder.Services.AddScoped<TheMovieDbRepository>();
 builder.Services.AddScoped<TheMovieDbService>();
+
 builder.Services.AddScoped<MovieService>();
+
+builder.Services.AddScoped<SerieMapper>();
+builder.Services.AddScoped<SerieRepository>();
 builder.Services.AddScoped<SerieService>();
+
 builder.Services.AddScoped<SshListFiles>();
 builder.Services.AddScoped<ListVolumesService>();
 builder.Services.AddScoped<LocalDrivesService>();
@@ -91,10 +98,13 @@ builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
 builder.Services.AddScoped<QBitTorrentService>();
+
 builder.Services.AddScoped<RadarrRepository>();
 builder.Services.AddScoped<RadarrService>();
+
 builder.Services.AddScoped<SonarrRepository>();
 builder.Services.AddScoped<SonarrService>();
+
 builder.Services.AddScoped<TautulliService>();
 
 builder.Services.AddScoped<YggTorrentRepository>();

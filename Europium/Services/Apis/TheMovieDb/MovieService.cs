@@ -21,15 +21,15 @@ public class MovieService : TheMovieDbService
 		parameters.Add("query", name);
 		parameters.Add("page", "1");
 		
-		var response = await _httpClient?.GetAsync(GetCompleteUri("3/search/movie", parameters), cts.Token)!;
+		var response = await HttpClient?.GetAsync(GetCompleteUri("3/search/movie", parameters), cts.Token)!;
 
 		var movie = (await response.Content.ReadAsAsync<Medias>(cts.Token)).Results.FirstOrDefault();
 
 		if (movie is null) return null;
 
 		movie.Link = $"https://www.themoviedb.org/movie/{movie.Id}?language=fr";
-		movie.BackdropPath = _theMovieDb?.ImageBasePath + movie.BackdropPath;
-		movie.PosterPath = _theMovieDb?.ImageBasePath + movie.PosterPath;
+		movie.BackdropPath = TheMovieDb?.ImageBasePath + movie.BackdropPath;
+		movie.PosterPath = TheMovieDb?.ImageBasePath + movie.PosterPath;
 		movie.RadarrInformation = await _radarrService.GetMovieByTmdbIdAsync(movie.Id);
 
 		return movie;
