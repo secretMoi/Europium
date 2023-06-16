@@ -18,7 +18,6 @@ jobs:
     - run: New-Item -Name Europium\bin\Release\net6.0\appconfig.json -ItemType File
     - run: (echo '${{ secrets.CONFIG }}') > Europium\bin\Release\net6.0\appconfig.json
     - run: taskkill /IM Europium.exe /F /FI "STATUS eq RUNNING"
-    - run: env
     - run: cd Europium/bin/Release/net6.0/ ; start .\Europium.exe /B
     # - run: cd Europium/bin/Release/net6.0/ ; ./launcher.bat
     #- run: cd Europium/bin/Release/net6.0/ ; Start-Process Europium.exe -ArgumentList "--urls=http://localhost:1010"
