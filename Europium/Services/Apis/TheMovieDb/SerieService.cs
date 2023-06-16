@@ -52,9 +52,9 @@ public class SerieService : TheMovieDbService
 
 		var serie = await response.Content.ReadAsAsync<SerieById>(cts.Token);
 
-		foreach (var season in serie.Seasons)
+		if (serie.Seasons is not null)
 		{
-			if (season.PosterPath is not null)
+			foreach (var season in serie.Seasons.Where(season => season.PosterPath is not null))
 				season.PosterPath = _theMovieDb?.ImageBasePath + season.PosterPath;
 		}
 

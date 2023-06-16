@@ -10,6 +10,6 @@ public class AppConfig
 	public string ApiToMonitorImagePath { get; set; } = null!;
 	public string ServerUrl { get; set; } = null!;
 	public List<string> AllowedUrls { get; set; } = null!;
-	public TheMovieDbConfig TheMovieDb { get; set; }
-	public YggTorrentConfig YggTorrent { get; set; }
+	public TheMovieDbConfig TheMovieDb { get; set; } = null!;
+	public YggTorrentConfig YggTorrent { get; set; } = null!;
 }

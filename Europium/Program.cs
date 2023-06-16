@@ -91,7 +91,9 @@ builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
 builder.Services.AddScoped<QBitTorrentService>();
+builder.Services.AddScoped<RadarrRepository>();
 builder.Services.AddScoped<RadarrService>();
+builder.Services.AddScoped<SonarrRepository>();
 builder.Services.AddScoped<SonarrService>();
 builder.Services.AddScoped<TautulliService>();
 

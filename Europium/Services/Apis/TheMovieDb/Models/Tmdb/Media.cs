@@ -31,7 +31,7 @@ public record Media
 	[JsonProperty("backdrop_path")]
 	public string BackdropPath { get; set; } = null!;
 	
-	public List<Season> Seasons { get; set; } = null!;
+	public List<Season>? Seasons { get; set; } = null!;
 
 	public RadarrInformation? RadarrInformation { get; set; }
 	public SonarrInformation? SonarrInformation { get; set; }

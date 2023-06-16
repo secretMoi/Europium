@@ -25,10 +25,10 @@ public class YggTorrentService
         return new YggTorrentAccount
         {
             Ratio = ExtractRatio(response),
-            Up = up.Item1,
-            UpUnit = up.Item2,
-            Down = down.Item1,
-            DownUnit = down.Item2,
+            Up = up.Value,
+            UpUnit = up.Unit,
+            Down = down.Value,
+            DownUnit = down.Unit,
         };
     }
 
@@ -49,14 +49,14 @@ public class YggTorrentService
         return decimal.Parse(responseString, CultureInfo.InvariantCulture);
     }
 
-    private (decimal, string) ExtractUp(string response)
+    private (decimal Value, string Unit) ExtractUp(string response)
     {
         var responseString = response.Split('-')[0];
         
         return (decimal.Parse(responseString.GetOnlyNumeric(), CultureInfo.InvariantCulture), GetUnit(responseString));
     }
 
-    private (decimal, string) ExtractDown(string response)
+    private (decimal Value, string Unit) ExtractDown(string response)
     {
         var responseString = response.Split('-')[1];
         responseString = responseString.RemoveAfter("Ratio");

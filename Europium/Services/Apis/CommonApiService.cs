@@ -4,11 +4,9 @@ using Europium.Repositories.Models;
 
 namespace Europium.Services.Apis;
 
-public class CommonApiService
+public class CommonApiService : BaseApiRepository
 {
 	protected readonly ApisToMonitorRepository _apisToMonitorRepository;
-
-	protected readonly HttpClient _httpClient;
 
 	protected ApiToMonitor? _monitoredApi;
 
@@ -19,15 +17,14 @@ public class CommonApiService
 		var cookies = new CookieContainer();
 		var handler = new HttpClientHandler();
 		handler.CookieContainer = cookies;
-		_httpClient = new HttpClient(handler);
+		HttpClient = new HttpClient(handler);
 	}
 	
 	public virtual async Task<bool> IsUpAsync(string url)
 	{
 		try
 		{
-			using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-			var response = await _httpClient.GetAsync(url + "/api/v3/system/status", cts.Token);
+			var response = await HttpClient.GetAsync(url + "/api/v3/system/status", GetCancellationToken(5));
 		       
 			return response.IsSuccessStatusCode;
 		}
