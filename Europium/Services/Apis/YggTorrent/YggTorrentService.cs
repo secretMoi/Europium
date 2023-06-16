@@ -18,13 +18,17 @@ public class YggTorrentService
     {
         var response = await _yggTorrentRepository.GetRatio();
 
-        response = CleanResponse(response);
+        response = CleanResponse(response); // return " 19.01To -  18.03To  Ratio : 1.054"
 
+        var up = ExtractUp(response);
+        var down = ExtractDown(response);
         return new YggTorrentAccount
         {
             Ratio = ExtractRatio(response),
-            Up = ExtractUp(response),
-            Down = ExtractDown(response)
+            Up = up.Item1,
+            UpUnit = up.Item2,
+            Down = down.Item1,
+            DownUnit = down.Item2,
         };
     }
 
@@ -45,20 +49,24 @@ public class YggTorrentService
         return decimal.Parse(responseString, CultureInfo.InvariantCulture);
     }
 
-    private decimal ExtractUp(string response)
+    private (decimal, string) ExtractUp(string response)
     {
         var responseString = response.Split('-')[0];
-        responseString = responseString.GetOnlyNumeric();
         
-        return decimal.Parse(responseString, CultureInfo.InvariantCulture);
+        return (decimal.Parse(responseString.GetOnlyNumeric(), CultureInfo.InvariantCulture), GetUnit(responseString));
     }
 
-    private decimal ExtractDown(string response)
+    private (decimal, string) ExtractDown(string response)
     {
         var responseString = response.Split('-')[1];
         responseString = responseString.RemoveAfter("Ratio");
-        responseString = responseString.GetOnlyNumeric();
         
-        return decimal.Parse(responseString, CultureInfo.InvariantCulture);
+        return (decimal.Parse(responseString.GetOnlyNumeric(), CultureInfo.InvariantCulture), GetUnit(responseString));
+    }
+
+    private string GetUnit(string response)
+    {
+        var responseTrimmed = response.TrimEnd();
+        return responseTrimmed.Substring(responseTrimmed.Length - 2);
     }
 }
