@@ -19,7 +19,7 @@ jobs:
     - run: (echo '${{ secrets.CONFIG }}') > Europium\bin\Release\net6.0\appconfig.json
     - run: taskkill /IM Europium.exe /F /FI "STATUS eq RUNNING"
     - run: env
-    - run: cd Europium/bin/Release/net6.0/ ; RUNNER_TRACKING_ID="" ; ./launcher.bat
+    - run: cd Europium/bin/Release/net6.0/ ;  ${{ runner.tracking.id="" }} ; ./launcher.bat
     #- run: cd Europium/bin/Release/net6.0/ ; Start-Process Europium.exe -ArgumentList "--urls=http://localhost:1010"
     #- run: cd Europium/bin/Release/net6.0/ ; RUNNER_TRACKING_ID="" ; start Europium.exe --urls=http://localhost:1010
     
