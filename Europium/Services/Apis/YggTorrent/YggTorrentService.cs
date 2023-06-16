@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Europium.Dtos;
+using Europium.Helpers.Extensions;
 using Europium.Repositories;
 
 namespace Europium.Services.Apis.YggTorrent;
@@ -21,29 +22,42 @@ public class YggTorrentService
 
         return new YggTorrentAccount
         {
-            Ratio = ExtractRatioFromResponse(response)
+            Ratio = ExtractRatio(response),
+            Up = ExtractUp(response),
+            Down = ExtractDown(response)
         };
     }
 
     private string CleanResponse(string response)
     {
-        response = response.Substring(response.IndexOf("Mes recherches", StringComparison.Ordinal) + "Mes recherches".Length);
-        response = response.Substring(0, response.IndexOf("Compte", StringComparison.Ordinal));
-        
-        while (response.Contains('<'))
-        {
-            int start = response.LastIndexOf('<');
-            int end = response.IndexOf('>', start);
-            response = response.Remove(start, end - start + 1);
-        }
+        response = response.RemoveBefore("Mes recherches");
+        response = response.RemoveAfter("Compte");
+        response = response.RemoveAllBetween('<', '>');
 
         return response;
     }
 
-    private decimal ExtractRatioFromResponse(string response)
+    private decimal ExtractRatio(string response)
     {
         var startIndex = response.IndexOf("Ratio : ", StringComparison.Ordinal) + "Ratio : ".Length;
         var responseString = response.Substring(startIndex, response.Length - startIndex);
+        
+        return decimal.Parse(responseString, CultureInfo.InvariantCulture);
+    }
+
+    private decimal ExtractUp(string response)
+    {
+        var responseString = response.Split('-')[0];
+        responseString = responseString.GetOnlyNumeric();
+        
+        return decimal.Parse(responseString, CultureInfo.InvariantCulture);
+    }
+
+    private decimal ExtractDown(string response)
+    {
+        var responseString = response.Split('-')[1];
+        responseString = responseString.RemoveAfter("Ratio");
+        responseString = responseString.GetOnlyNumeric();
         
         return decimal.Parse(responseString, CultureInfo.InvariantCulture);
     }
