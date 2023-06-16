@@ -11,4 +11,5 @@ public class AppConfig
 	public string ServerUrl { get; set; } = null!;
 	public List<string> AllowedUrls { get; set; } = null!;
 	public TheMovieDbConfig TheMovieDb { get; set; }
+	public YggTorrentConfig YggTorrent { get; set; }
 }

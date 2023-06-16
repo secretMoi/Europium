@@ -1,60 +1,35 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using Europium.Dtos;
+using Europium.Repositories;
 
 namespace Europium.Services.Apis.YggTorrent;
 
 public class YggTorrentService
 {
-    private static HttpClient? _httpClient;
-    private static CookieContainer? _cookies;
+    private readonly YggTorrentRepository _yggTorrentRepository;
 
-    public YggTorrentService()
+    public YggTorrentService(YggTorrentRepository yggTorrentRepository)
     {
-        _cookies ??= new CookieContainer();
-        
-        if (_httpClient is null)
-        {
-            var handler = new HttpClientHandler();
-            handler.CookieContainer = _cookies;
-            _httpClient = new HttpClient(handler);
-        }
+        _yggTorrentRepository = yggTorrentRepository;
     }
     
-    public async Task<bool> GetRatio()
+    public async Task<YggTorrentAccount> GetRatio()
     {
-        await Login();
-        
-        using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 20));
-        var t = await _httpClient?.GetStringAsync(
-            "https://www3.yggtorrent.do/user/ajax_usermenu",
-            cts.Token
-        )!;
+        var response = await _yggTorrentRepository.GetRatio();
 
-        t = t.Substring(t.IndexOf("ico_upload") + "ico_upload".Length);
-        t = t.Substring(0, t.IndexOf("Compte"));
+        response = CleanResponse(response);
 
-        t = CleanResponse(t);
-
-        return true;
-    }
-
-    private async Task Login()
-    {
-        using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 20));
-        var formContent = new FormUrlEncodedContent(new[]
+        return new YggTorrentAccount
         {
-            new KeyValuePair<string, string>("id", "ygguser"), 
-            new KeyValuePair<string, string>("pass", "yggpass") 
-        });
-        
-        await _httpClient?.PostAsync(
-            "https://www3.yggtorrent.do/user/login",
-            formContent,
-            cts.Token
-        )!;
+            Ratio = ExtractRatioFromResponse(response)
+        };
     }
 
     private string CleanResponse(string response)
     {
+        response = response.Substring(response.IndexOf("Mes recherches", StringComparison.Ordinal) + "Mes recherches".Length);
+        response = response.Substring(0, response.IndexOf("Compte", StringComparison.Ordinal));
+        
         while (response.Contains('<'))
         {
             int start = response.LastIndexOf('<');
@@ -63,5 +38,13 @@ public class YggTorrentService
         }
 
         return response;
+    }
+
+    private decimal ExtractRatioFromResponse(string response)
+    {
+        var startIndex = response.IndexOf("Ratio : ", StringComparison.Ordinal) + "Ratio : ".Length;
+        var responseString = response.Substring(startIndex, response.Length - startIndex);
+        
+        return decimal.Parse(responseString, CultureInfo.InvariantCulture);
     }
 }

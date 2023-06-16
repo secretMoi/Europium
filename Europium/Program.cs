@@ -94,6 +94,8 @@ builder.Services.AddScoped<QBitTorrentService>();
 builder.Services.AddScoped<RadarrService>();
 builder.Services.AddScoped<SonarrService>();
 builder.Services.AddScoped<TautulliService>();
+
+builder.Services.AddScoped<YggTorrentRepository>();
 builder.Services.AddScoped<YggTorrentService>();
 
 

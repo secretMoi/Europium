@@ -54,4 +54,8 @@
       <None Remove="Ressources\tautulli.svg" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Helpers\Utils\" />
+    </ItemGroup>
+
 </Project>
