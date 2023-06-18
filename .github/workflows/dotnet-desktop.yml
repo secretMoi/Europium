@@ -19,10 +19,13 @@ jobs:
       - name: Get last version from GitHub
         uses: actions/checkout@v3
 
-      - run: dotnet build --configuration Release .\Europium.sln
+      - name: Compile
+        run: dotnet build --configuration Release .\Europium.sln
 
-      - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
-      - run: (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
+      - name: Create config file
+        run: |
+             New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
+             (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
 
       - run: New-Item -Name ${{ vars.START_SERVER_BATCH_PATH }} -ItemType File
       - run: Set-Content -Path ${{ vars.START_SERVER_BATCH_PATH }} -Value '${{ vars.START_SERVER_SCRIPT }}'
