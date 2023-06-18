@@ -53,9 +53,6 @@
       </Content>
       <None Remove="Ressources\tautulli.svg" />
       <None Remove="launcher.bat" />
-      <Content Include="launcher.bat">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
 </Project>

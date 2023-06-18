@@ -1,1 +1,0 @@
-﻿start cmd.exe /c Europium.exe --urls=http://localhost:1010
