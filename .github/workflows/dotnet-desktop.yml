@@ -23,7 +23,6 @@ jobs:
 
       - run: New-Item -Name ${{ vars.START_SERVER_BATCH_PATH }} -ItemType File
       - run: Set-Content -Path ${{ vars.START_SERVER_BATCH_PATH }} -Value '${{ vars.START_SERVER_SCRIPT }}'
-      - run: Get-Content ${{ vars.START_SERVER_BATCH_PATH }} | Set-Content -Encoding utf8 ${{ vars.START_SERVER_BATCH_PATH }}
   
       - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
       - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
