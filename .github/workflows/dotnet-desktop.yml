@@ -1,4 +1,4 @@
-name: Europium Server
+name: Europium Serverstart
 
 on:
   push:
@@ -13,6 +13,7 @@ jobs:
     runs-on: self-hosted
     environment: Prod
     steps:
+      - run: taskkill /IM Europium.exe /F
       - uses: actions/checkout@v3
 
       - run: dotnet build --configuration Release .\Europium.sln
@@ -23,6 +24,5 @@ jobs:
       - run: New-Item -Name ${{ vars.START_SERVER_BATCH_PATH }} -ItemType File
       - run: (echo '${{ vars.START_SERVER_SCRIPT }}') > ${{ vars.START_SERVER_BATCH_PATH }}
   
-      - run: taskkill /IM Europium.exe /F
       - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
       - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
