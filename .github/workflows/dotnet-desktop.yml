@@ -33,7 +33,7 @@ jobs:
              Set-Content -Path ${{ vars.START_SERVER_BATCH_PATH }} -Value '${{ vars.START_SERVER_SCRIPT }}'
 
       - name: Creater server scheduled task
-        run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
+        run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc ONSTART /sd 01/01/2099 /st 23:59 /F
         
       - name: Launch server
         run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
