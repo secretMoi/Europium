@@ -2,6 +2,7 @@ using Europium;
 using Europium.Mappers;
 using Europium.Models;
 using Europium.Repositories;
+using Europium.Repositories.Ssh;
 using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
 using Europium.Services.Apis.QBitTorrent;
@@ -90,6 +91,7 @@ builder.Services.AddScoped<SerieMapper>();
 builder.Services.AddScoped<SerieRepository>();
 builder.Services.AddScoped<SerieService>();
 
+builder.Services.AddScoped<SshNasRepository>();
 builder.Services.AddScoped<SshListFiles>();
 builder.Services.AddScoped<ListVolumesService>();
 builder.Services.AddScoped<LocalDrivesService>();

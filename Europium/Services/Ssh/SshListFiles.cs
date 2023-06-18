@@ -1,35 +1,33 @@
 ﻿using Europium.Dtos;
-using Europium.Models;
-using Microsoft.Extensions.Options;
+using Europium.Repositories.Ssh;
 using File = Europium.Dtos.File;
 
 namespace Europium.Services.Ssh;
 
-public class SshListFiles : SshService
+public class SshListFiles
 {
-	private ListFilesArguments? _listFilesArguments;
-	
-	public SshListFiles(IOptions<AppConfig> optionsSnapshot)
-		: base(optionsSnapshot.Value.SshHost, optionsSnapshot.Value.SshUser, optionsSnapshot.Value.SshPassword, optionsSnapshot.Value.SshPort)
+	private readonly SshNasRepository _sshNasRepository;
+
+	public SshListFiles(SshNasRepository sshNasRepository)
 	{
+		_sshNasRepository = sshNasRepository;
 	}
 
 	public async Task<List<File>?> GetFiles(ListFilesArguments listFilesArguments)
 	{
-		_listFilesArguments = listFilesArguments;
-		
-		await ConnectAsync();
-		
-		var commandResponse = await RunCommandAsync(GetSshCommandToExecute());
-		if (commandResponse is null) return null;
+		await _sshNasRepository.ConnectAsync();
 
-		return ParseCommandResponse(commandResponse);
+		var commandResponse = await _sshNasRepository.RunCommandAsync(
+			_sshNasRepository.GetSshCommandToExecute(listFilesArguments.Path ?? "", listFilesArguments.FileType,
+				listFilesArguments.Limit));
+		
+		return commandResponse is null ? null : ParseCommandResponse(commandResponse);
 	}
 
 	private List<File> ParseCommandResponse(string commandResponse)
 	{
 		var lines = commandResponse.Split('\n').SkipLast(1); // casse la chaine en lignes
-		
+
 		return lines.Select(GetFileFromCommandResponse).ToList();
 	}
 
@@ -57,19 +55,5 @@ public class SshListFiles : SshService
 		}
 
 		return file;
-	}
-
-	private string GetSshCommandToExecute()
-	{
-		var commandToExecute = "find " + _listFilesArguments?.Path;
-
-		if (_listFilesArguments?.FileType == FileType.File)
-			commandToExecute += " -type f";
-		if (_listFilesArguments?.FileType == FileType.Folder)
-			commandToExecute += " -type d";
-
-		commandToExecute += " -exec du -S {} + | sort -rh | head -n " + _listFilesArguments?.Limit;
-
-		return commandToExecute;
 	}
 }
