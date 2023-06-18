@@ -13,13 +13,15 @@ jobs:
     runs-on: self-hosted
     environment: Prod
     steps:
-    - uses: actions/checkout@v3
-    - run: dotnet build --configuration Release .\Europium.sln
-    - run: New-Item -Name Europium\bin\Release\net6.0\appconfig.json -ItemType File
-    - run: (echo '${{ secrets.CONFIG }}') > Europium\bin\Release\net6.0\appconfig.json
-    - run: taskkill /IM Europium.exe /F /FI "STATUS eq RUNNING"
-    - run: cd Europium/bin/Release/net6.0/ ; start .\Europium.exe /B
-    # - run: cd Europium/bin/Release/net6.0/ ; ./launcher.bat
-    #- run: cd Europium/bin/Release/net6.0/ ; Start-Process Europium.exe -ArgumentList "--urls=http://localhost:1010"
-    #- run: cd Europium/bin/Release/net6.0/ ; RUNNER_TRACKING_ID="" ; start Europium.exe --urls=http://localhost:1010
+    - name: Get git code
+      uses: actions/checkout@v3
+
+    - name: Build
+      run: dotnet build --configuration Release .\Europium.sln
+
+    - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
+    - run: (echo '${{ secrets.CONFIG }}') > ${{ vars.START_SERVER_BATCH_PATH }}
+    - run: taskkill /IM Europium.exe /F
+    - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.APP_CONFIG_FILE_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
+    - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
     
