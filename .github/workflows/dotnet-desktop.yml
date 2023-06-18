@@ -13,8 +13,11 @@ jobs:
     runs-on: self-hosted
     environment: Prod
     steps:
-      - run: taskkill /IM Europium.exe /F
-      - uses: actions/checkout@v3
+      - name: Close Server
+        run: taskkill /IM Europium.exe /F
+        
+      - name: Get last version from GitHub
+        uses: actions/checkout@v3
 
       - run: dotnet build --configuration Release .\Europium.sln
 
