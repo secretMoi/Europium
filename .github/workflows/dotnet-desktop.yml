@@ -14,10 +14,10 @@ jobs:
     environment: Prod
     steps:
     - name: Get git code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
     - name: Build
-      run: dotnet build --configuration Release .\Europium.sln
+      - run: dotnet build --configuration Release .\Europium.sln
 
     - name: Create config file
       - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
