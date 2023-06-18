@@ -20,11 +20,11 @@ jobs:
       run: dotnet build --configuration Release .\Europium.sln
 
     - name: Create config file
-      run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
-      run: (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
+    - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
+    - run: (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
 
     - name: Restart server
-      run: taskkill /IM Europium.exe /F
-      run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
-      run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
+    - run: taskkill /IM Europium.exe /F
+    - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
+    - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
     
