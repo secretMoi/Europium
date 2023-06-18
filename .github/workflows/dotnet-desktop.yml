@@ -3,21 +3,26 @@ name: .NET Core Desktop
 on:
   push:
     branches: [ "master" ]
-    
+
 jobs:
   build:
     strategy:
       matrix:
         configuration: [Release]
-      
+    
     runs-on: self-hosted
     environment: Prod
     steps:
-    - uses: actions/checkout@v3
-    - run: dotnet build --configuration Release .\Europium.sln
-    - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
-    - run: (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
-    - run: taskkill /IM Europium.exe /F
-    - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
-    - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
-    
+      - uses: actions/checkout@v3
+
+      - run: dotnet build --configuration Release .\Europium.sln
+
+      - run: New-Item -Name ${{ vars.APP_CONFIG_FILE_PATH }} -ItemType File
+      - run: (echo '${{ secrets.CONFIG }}') > ${{ vars.APP_CONFIG_FILE_PATH }}
+
+      - run: New-Item -Name ${{ vars.START_SERVER_BATCH_PATH }} -ItemType File
+      - run: (echo '${{ vars.START_SERVER_SCRIPT }}') > ${{ vars.START_SERVER_BATCH_PATH }}
+  
+      - run: taskkill /IM Europium.exe /F
+      - run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_PATH }}" /sc once /sd 01/01/2099 /st 23:59 /F
+      - run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
