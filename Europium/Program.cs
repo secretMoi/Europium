@@ -99,6 +99,7 @@ builder.Services.AddScoped<LocalDrivesService>();
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
+builder.Services.AddScoped<QBitTorrentRepository>();
 builder.Services.AddScoped<QBitTorrentService>();
 
 builder.Services.AddScoped<RadarrRepository>();

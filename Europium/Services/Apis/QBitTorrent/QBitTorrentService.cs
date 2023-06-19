@@ -1,92 +1,28 @@
-﻿using System.Net;
-using Europium.Models;
-using Europium.Repositories;
-using Europium.Repositories.Models;
+﻿using Europium.Repositories;
 
 namespace Europium.Services.Apis.QBitTorrent;
 
 public class QBitTorrentService
 {
-	private static ApiToMonitor? _monitoredApi;
+	private readonly QBitTorrentRepository _qBitTorrentRepository;
 
-	private static HttpClient? _httpClient;
-	private static CookieContainer? _cookies;
-
-	public QBitTorrentService(ApisToMonitorRepository apisToMonitorRepository)
+	public QBitTorrentService(QBitTorrentRepository qBitTorrentRepository)
 	{
-		_monitoredApi ??= apisToMonitorRepository.GetApiByCode(ApiCode.QBITTORRENT);
-
-		_cookies ??= new CookieContainer();
-
-		if (_httpClient is null)
-		{
-			var handler = new HttpClientHandler();
-			handler.CookieContainer = _cookies;
-			_httpClient = new HttpClient(handler);
-		}
+		_qBitTorrentRepository = qBitTorrentRepository;
 	}
 
 	public async Task<bool> IsUpAsync()
 	{
-		try
-		{
-			return await LoginAsync();
-		}
-		catch (Exception)
-		{
-			return false;
-		}
-	}
-
-	private async Task<bool> LoginAsync(bool skipLoginIfAlreadyLogged = false)
-	{
-		if (_cookies?.Count > 0 && skipLoginIfAlreadyLogged) return true;
-
-		var logins = new List<KeyValuePair<string, string>>
-		{
-			new("username", _monitoredApi?.UserName ?? string.Empty),
-			new("password", _monitoredApi?.Password ?? string.Empty)
-		};
-
-		var req = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/auth/login")
-			{ Content = new FormUrlEncodedContent(logins) };
-		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		var httpResponse = await _httpClient?.SendAsync(req, cts.Token)!;
-		var responseBody = await httpResponse.Content.ReadAsStringAsync(cts.Token);
-		return httpResponse.IsSuccessStatusCode && responseBody.Contains("Ok");
+		return await _qBitTorrentRepository.IsUpAsync();
 	}
 
 	public async Task<List<TorrentInfo>?> GetAllAsync()
 	{
-		await LoginAsync();
-		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		var response = await _httpClient?.GetAsync(_monitoredApi?.Url + "/api/v2/torrents/info?filter=all", cts.Token)!;
-
-		if (response.StatusCode == HttpStatusCode.Forbidden)
-			await LoginAsync();
-
-		if (!response.IsSuccessStatusCode)
-			return null;
-
-		return await response.Content.ReadAsAsync<List<TorrentInfo>>(cts.Token);
+		return await _qBitTorrentRepository.GetAllAsync();
 	}
 
 	public async Task<bool> DeleteTorrentAsync(string torrentHash)
 	{
-		await LoginAsync();
-		using var cts = new CancellationTokenSource(new TimeSpan(0, 0, 5));
-		var formContent = new FormUrlEncodedContent(new[]
-		{
-			new KeyValuePair<string, string>("hashes", torrentHash), 
-			new KeyValuePair<string, string>("deleteFiles", "false") 
-		});
-		
-		var httpResponseMessage = await _httpClient?.PostAsync(
-			_monitoredApi?.Url + "/api/v2/torrents/delete",
-			formContent,
-			cts.Token
-		)!;
-
-		return httpResponseMessage.IsSuccessStatusCode;
+		return await _qBitTorrentRepository.DeleteTorrentAsync(torrentHash);
 	}
 }
