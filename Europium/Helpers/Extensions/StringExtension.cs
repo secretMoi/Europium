@@ -2,14 +2,20 @@
 
 public static class StringExtension
 {
-    public static string RemoveBefore(this string text, string separator)
+    public static string RemoveBefore(this string text, string separator, bool includeSeparator = true)
     {
-        return text.Substring(text.IndexOf(separator, StringComparison.Ordinal) + separator.Length);
+        var lengthToRemoveAfter = includeSeparator ? separator.Length : 0;
+        return text.Substring(text.IndexOf(separator, StringComparison.Ordinal) + lengthToRemoveAfter);
     }
     
     public static string RemoveAfter(this string text, string separator)
     {
         return text.Substring(0, text.IndexOf(separator, StringComparison.Ordinal));
+    }
+    
+    public static string RemoveAfterLast(this string text, string separator)
+    {
+        return text.Substring(0, text.LastIndexOf(separator, StringComparison.Ordinal) + separator.Length);
     }
     
     public static string RemoveBetween(this string text, char first, char last)

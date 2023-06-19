@@ -110,6 +110,8 @@ builder.Services.AddScoped<SonarrService>();
 builder.Services.AddScoped<TautulliService>();
 
 builder.Services.AddScoped<YggTorrentRepository>();
+builder.Services.AddScoped<YggTorrentRatioFetcher>();
+builder.Services.AddScoped<YggTorrentSearcher>();
 builder.Services.AddScoped<YggTorrentService>();
 
 
