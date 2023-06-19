@@ -25,6 +25,13 @@ public class YggTorrentController : ControllerBase
     [HttpPost("search")]
     public async Task<IActionResult> SearchTorrentByName([FromBody] YggSearchParameterDto searchParameter)
     {
-        return Ok(await _yggTorrentService.SearchByName(searchParameter.Search));
+        try
+        {
+            return Ok(await _yggTorrentService.SearchByName(searchParameter.Search));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

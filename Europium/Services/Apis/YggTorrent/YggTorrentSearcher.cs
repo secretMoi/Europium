@@ -15,6 +15,10 @@ public class YggTorrentSearcher
     public async Task<List<YggTorrentSearchDto>> SearchTorrent(string torrentName)
     {
         var htmlResponse = await _yggTorrentRepository.SearchTorrent(torrentName);
+
+        if (htmlResponse.Contains("Aucun résultat"))
+            throw new KeyNotFoundException();
+        
         htmlResponse = htmlResponse.RemoveBefore("listing torrents");
         htmlResponse = htmlResponse.RemoveAfter("end table");
         htmlResponse = htmlResponse.RemoveBefore("<", false);
@@ -25,10 +29,14 @@ public class YggTorrentSearcher
         var torrents = new List<YggTorrentSearchDto>();
         foreach (var torrentHtml in torrentsHtml)
         {
+            var name = GetTorrentName(torrentHtml);
+            
+            if(SkipTorrent(name)) continue;
+            
             var pageUrl = GetPageUrl(torrentHtml);
             var torrent = new YggTorrentSearchDto
             {
-                Name = GetTorrentName(torrentHtml),
+                Name = name,
                 PageUrl = pageUrl,
                 TorrentUrl = GetTorrentUrl(pageUrl),
                 Size = GetTorrentSize(torrentHtml),
@@ -43,6 +51,17 @@ public class YggTorrentSearcher
         return torrents;
     }
 
+    private bool SkipTorrent(string name)
+    {
+        var torrentName = name.ToLower();
+
+        if(torrentName.Contains("vfq")) return true;
+        if(!torrentName.Contains("1080") && !torrentName.Contains("2160")) return true;
+        if(torrentName.Contains("french") && !torrentName.Contains("truefrench")) return true;
+
+        return false;
+    }
+    
     private string GetTorrentName(string torrentHtml)
     {
         var name = "<" + torrentHtml.RemoveBefore("torrent_name");
