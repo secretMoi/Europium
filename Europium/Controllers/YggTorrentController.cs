@@ -1,4 +1,5 @@
-﻿using Europium.Services.Apis.YggTorrent;
+﻿using Europium.Dtos;
+using Europium.Services.Apis.YggTorrent;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -22,8 +23,8 @@ public class YggTorrentController : ControllerBase
     }
 
     [HttpPost("search")]
-    public async Task<IActionResult> SearchTorrentByName([FromBody, BindRequired] string search)
+    public async Task<IActionResult> SearchTorrentByName([FromBody] YggSearchParameterDto searchParameter)
     {
-        return Ok(await _yggTorrentService.SearchByName(search));
+        return Ok(await _yggTorrentService.SearchByName(searchParameter.Search));
     }
 }
