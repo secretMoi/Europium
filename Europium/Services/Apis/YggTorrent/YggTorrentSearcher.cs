@@ -14,24 +14,33 @@ public class YggTorrentSearcher
     
     public async Task<List<YggTorrentSearchDto>> SearchTorrent(string torrentName)
     {
-        var htmlResponse = await _yggTorrentRepository.SearchTorrent(torrentName);
+        var pages = await _yggTorrentRepository.SearchTorrents(torrentName);
 
-        if (htmlResponse.Contains("Aucun résultat"))
+        if (pages.First().Contains("Aucun résultat"))
             throw new KeyNotFoundException();
-        
-        htmlResponse = htmlResponse.RemoveBefore("listing torrents");
-        htmlResponse = htmlResponse.RemoveAfter("end table");
-        htmlResponse = htmlResponse.RemoveBefore("<", false);
-        htmlResponse = htmlResponse.RemoveAfterLast(">");
-
-        var torrentsHtml = htmlResponse.Split("<tr>").Skip(1);
 
         var torrents = new List<YggTorrentSearchDto>();
+        foreach (var page in pages)
+            ParsePage(page, torrents);
+
+        return torrents;
+    }
+
+    private void ParsePage(string page, List<YggTorrentSearchDto> torrents)
+    {
+        page = page.RemoveBefore("listing torrents");
+        page = page.RemoveAfter("end table");
+        page = page.RemoveBefore("<", false);
+        page = page.RemoveAfterLast(">");
+
+        var torrentsHtml = page.Split("<tr>").Skip(1);
+        
         foreach (var torrentHtml in torrentsHtml)
         {
             var name = GetTorrentName(torrentHtml);
+            var type = GetTorrentType(torrentHtml);
             
-            if(SkipTorrent(name)) continue;
+            if(SkipTorrent(name, type)) continue;
             
             var pageUrl = GetPageUrl(torrentHtml);
             var torrent = new YggTorrentSearchDto
@@ -44,13 +53,11 @@ public class YggTorrentSearcher
                 Seeders = GetTorrentSeeders(torrentHtml),
                 Age = GetTorrentAge(torrentHtml),
                 MediaQuality = GetTorrentQuality(name),
-                MediaType = GetTorrentType(torrentHtml)
+                MediaType = type
             };
             
             torrents.Add(torrent);
         }
-
-        return torrents;
     }
 
     private MediaType GetTorrentType(string torrentHtml)
@@ -58,26 +65,29 @@ public class YggTorrentSearcher
         var type = torrentHtml.Split("</td>")[0];
         if (type.Contains("2183")) return MediaType.Movie;
         if (type.Contains("2184")) return MediaType.Serie;
+        if (type.Contains("2178") || type.Contains("2179")) return MediaType.Anime;
 
         return MediaType.Unknown;
     }
 
     private MediaQuality GetTorrentQuality(string name)
     {
-        if (name.Contains("720p")) return MediaQuality.HD;
-        if (name.Contains("1080p")) return MediaQuality.FHD;
-        if (name.Contains("2160p")) return MediaQuality.UHD;
+        name = name.ToLower();
+        if (name.Contains("720")) return MediaQuality.HD;
+        if (name.Contains("1080")) return MediaQuality.FHD;
+        if (name.Contains("2160")) return MediaQuality.UHD;
 
         return MediaQuality.Unknown;
     }
 
-    private bool SkipTorrent(string name)
+    private bool SkipTorrent(string name, MediaType mediaType)
     {
         var torrentName = name.ToLower();
 
         if(torrentName.Contains("vfq")) return true;
         if(!torrentName.Contains("1080") && !torrentName.Contains("2160")) return true;
         if(torrentName.Contains("french") && !torrentName.Contains("truefrench")) return true;
+        if (mediaType == MediaType.Unknown) return true;
 
         return false;
     }

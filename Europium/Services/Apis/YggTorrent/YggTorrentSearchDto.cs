@@ -26,4 +26,5 @@ public enum MediaType
     Unknown,
     Movie,
     Serie,
+    Anime,
 }
