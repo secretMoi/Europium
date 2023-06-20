@@ -43,12 +43,32 @@ public class YggTorrentSearcher
                 Downloaded = GetTorrentDownloaded(torrentHtml),
                 Seeders = GetTorrentSeeders(torrentHtml),
                 Age = GetTorrentAge(torrentHtml),
+                MediaQuality = GetTorrentQuality(name),
+                MediaType = GetTorrentType(torrentHtml)
             };
             
             torrents.Add(torrent);
         }
 
         return torrents;
+    }
+
+    private MediaType GetTorrentType(string torrentHtml)
+    {
+        var type = torrentHtml.Split("</td>")[0];
+        if (type.Contains("2183")) return MediaType.Movie;
+        if (type.Contains("2184")) return MediaType.Serie;
+
+        return MediaType.Unknown;
+    }
+
+    private MediaQuality GetTorrentQuality(string name)
+    {
+        if (name.Contains("720p")) return MediaQuality.HD;
+        if (name.Contains("1080p")) return MediaQuality.FHD;
+        if (name.Contains("2160p")) return MediaQuality.UHD;
+
+        return MediaQuality.Unknown;
     }
 
     private bool SkipTorrent(string name)

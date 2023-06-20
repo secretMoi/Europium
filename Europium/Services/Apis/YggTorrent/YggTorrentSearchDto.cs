@@ -9,4 +9,21 @@ public class YggTorrentSearchDto
     public string Size { get; set; }
     public string Downloaded { get; set; }
     public string Seeders { get; set; }
+    public MediaQuality MediaQuality { get; set; }
+    public MediaType MediaType { get; set; }
+}
+
+public enum MediaQuality
+{
+    Unknown,
+    HD,
+    FHD,
+    UHD
+}
+
+public enum MediaType
+{
+    Unknown,
+    Movie,
+    Serie,
 }
