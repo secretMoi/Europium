@@ -1,4 +1,5 @@
 ﻿using Europium.Helpers.Extensions;
+using Europium.Mappers;
 using Europium.Repositories;
 
 namespace Europium.Services.Apis.YggTorrent;
@@ -6,10 +7,14 @@ namespace Europium.Services.Apis.YggTorrent;
 public class YggTorrentSearcher
 {
     private readonly YggTorrentRepository _yggTorrentRepository;
+    private readonly SizeMapper _sizeMapper;
+    private readonly YggMapper _yggMapper;
 
-    public YggTorrentSearcher(YggTorrentRepository yggTorrentRepository)
+    public YggTorrentSearcher(YggTorrentRepository yggTorrentRepository, SizeMapper sizeMapper, YggMapper yggMapper)
     {
         _yggTorrentRepository = yggTorrentRepository;
+        _sizeMapper = sizeMapper;
+        _yggMapper = yggMapper;
     }
     
     public async Task<List<YggTorrentSearchDto>> SearchTorrent(string torrentName)
@@ -118,27 +123,27 @@ public class YggTorrentSearcher
         return _yggTorrentRepository.GetDownloadTorrentUrl(torrentId);
     }
 
-    private string GetTorrentSize(string torrentHtml)
+    private long GetTorrentSize(string torrentHtml)
     {
-        return torrentHtml.Split("<td>")[5].RemoveAfter("<");
+        return _sizeMapper.ValueToByte(torrentHtml.Split("<td>")[5].RemoveAfter("<"));
     }
 
-    private string GetTorrentDownloaded(string torrentHtml)
+    private int GetTorrentDownloaded(string torrentHtml)
     {
-        return torrentHtml.Split("<td>")[6].RemoveAfter("<");
+        return int.Parse(torrentHtml.Split("<td>")[6].RemoveAfter("<"));
     }
 
-    private string GetTorrentSeeders(string torrentHtml)
+    private int GetTorrentSeeders(string torrentHtml)
     {
-        return torrentHtml.Split("<td>")[7].RemoveAfter("<");
+        return int.Parse(torrentHtml.Split("<td>")[7].RemoveAfter("<"));
     }
 
-    private string GetTorrentAge(string torrentHtml)
+    private long GetTorrentAge(string torrentHtml)
     {
-        return torrentHtml
+        return _yggMapper.MapTorrentAge(torrentHtml
             .Split("<td>")[4]
             .Split("</span>")[1]
             .RemoveAllBetween('<', '>')
-            .Trim();
+            .Trim());
     }
 }

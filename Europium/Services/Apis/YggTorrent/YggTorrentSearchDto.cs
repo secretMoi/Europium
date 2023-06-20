@@ -5,10 +5,10 @@ public class YggTorrentSearchDto
     public string Name { get; set; }
     public string PageUrl { get; set; }
     public string TorrentUrl { get; set; }
-    public string Age { get; set; }
-    public string Size { get; set; }
-    public string Downloaded { get; set; }
-    public string Seeders { get; set; }
+    public long Age { get; set; }
+    public long Size { get; set; }
+    public int Downloaded { get; set; }
+    public int Seeders { get; set; }
     public MediaQuality MediaQuality { get; set; }
     public MediaType MediaType { get; set; }
 }

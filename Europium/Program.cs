@@ -112,6 +112,7 @@ builder.Services.AddScoped<TautulliService>();
 
 builder.Services.AddScoped<YggTorrentRepository>();
 builder.Services.AddScoped<YggTorrentRatioFetcher>();
+builder.Services.AddScoped<YggMapper>();
 builder.Services.AddScoped<YggTorrentSearcher>();
 builder.Services.AddScoped<YggTorrentService>();
 
