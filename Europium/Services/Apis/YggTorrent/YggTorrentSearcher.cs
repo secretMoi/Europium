@@ -16,7 +16,7 @@ public class YggTorrentSearcher
         _sizeMapper = sizeMapper;
         _yggMapper = yggMapper;
     }
-    
+
     public async Task<List<YggTorrentSearchDto>> SearchTorrent(string torrentName)
     {
         var pages = await _yggTorrentRepository.SearchTorrents(torrentName);
@@ -39,35 +39,35 @@ public class YggTorrentSearcher
         page = page.RemoveAfterLast(">");
 
         var torrentsHtml = page.Split("<tr>").Skip(1);
-        
+
         foreach (var torrentHtml in torrentsHtml)
         {
-            var name = GetTorrentName(torrentHtml);
-            var type = GetTorrentType(torrentHtml);
-            
-            if(SkipTorrent(name, type)) continue;
-            
-            var pageUrl = GetPageUrl(torrentHtml);
+            var htmlSplit = torrentHtml.Split("</td>");
+            var name = GetTorrentName(htmlSplit[1]);
+            var type = GetTorrentType(htmlSplit[0]);
+
+            if (SkipTorrent(name, type)) continue;
+
+            var pageUrl = GetPageUrl(htmlSplit[1]);
             var torrent = new YggTorrentSearchDto
             {
                 Name = name,
                 PageUrl = pageUrl,
                 TorrentUrl = GetTorrentUrl(pageUrl),
-                Size = GetTorrentSize(torrentHtml),
-                Downloaded = GetTorrentDownloaded(torrentHtml),
-                Seeders = GetTorrentSeeders(torrentHtml),
-                Age = GetTorrentAge(torrentHtml),
+                Size = GetTorrentSize(htmlSplit[5]),
+                Downloaded = GetTorrentDownloaded(htmlSplit[6]),
+                Seeders = GetTorrentSeeders(htmlSplit[7]),
+                Age = GetTorrentAge(htmlSplit[4]),
                 MediaQuality = GetTorrentQuality(name),
                 MediaType = type
             };
-            
+
             torrents.Add(torrent);
         }
     }
 
-    private MediaType GetTorrentType(string torrentHtml)
+    private MediaType GetTorrentType(string type)
     {
-        var type = torrentHtml.Split("</td>")[0];
         if (type.Contains("2183")) return MediaType.Movie;
         if (type.Contains("2184")) return MediaType.Serie;
         if (type.Contains("2178") || type.Contains("2179")) return MediaType.Anime;
@@ -89,29 +89,26 @@ public class YggTorrentSearcher
     {
         var torrentName = name.ToLower();
 
-        if(torrentName.Contains("vfq")) return true;
-        if(!torrentName.Contains("1080") && !torrentName.Contains("2160")) return true;
-        if(torrentName.Contains("french") && !torrentName.Contains("truefrench")) return true;
+        if (torrentName.Contains("vfq")) return true;
+        if (!torrentName.Contains("1080") && !torrentName.Contains("2160") && !torrentName.Contains("fhd") && !torrentName.Contains("uhd")) return true;
+        if (torrentName.Contains("french") && !torrentName.Contains("truefrench")) return true;
         if (mediaType == MediaType.Unknown) return true;
 
         return false;
     }
-    
+
     private string GetTorrentName(string torrentHtml)
     {
-        var name = "<" + torrentHtml.RemoveBefore("torrent_name");
-        name = name.RemoveAfter("get_nfo") + ">";
-        name = name.RemoveAllBetween('<', '>');
-        name = name.Replace("\r", string.Empty);
-        name = name.Replace("\n", string.Empty);
-        name = name.Trim();
-        return name;
+        return torrentHtml.RemoveAllBetween('<', '>')
+            .Replace("\r", string.Empty)
+            .Replace("\n", string.Empty)
+            .Trim();
     }
 
     private string GetPageUrl(string torrentHtml)
     {
         return torrentHtml
-            .Split("href=\"")[2]
+            .Split("href=\"")[1]
             .RemoveAfter("\"")
             .Replace("&amp;", "+");
     }
@@ -125,25 +122,23 @@ public class YggTorrentSearcher
 
     private long GetTorrentSize(string torrentHtml)
     {
-        return _sizeMapper.ValueToByte(torrentHtml.Split("<td>")[5].RemoveAfter("<"));
+        return _sizeMapper.ValueToByte(torrentHtml.RemoveBefore(">"));
     }
 
     private int GetTorrentDownloaded(string torrentHtml)
     {
-        return int.Parse(torrentHtml.Split("<td>")[6].RemoveAfter("<"));
+        return int.Parse(torrentHtml.RemoveBefore(">"));
     }
 
     private int GetTorrentSeeders(string torrentHtml)
     {
-        return int.Parse(torrentHtml.Split("<td>")[7].RemoveAfter("<"));
+        return int.Parse(torrentHtml.RemoveBefore(">"));
     }
 
     private long GetTorrentAge(string torrentHtml)
     {
-        return _yggMapper.MapTorrentAge(torrentHtml
-            .Split("<td>")[4]
-            .Split("</span>")[1]
-            .RemoveAllBetween('<', '>')
-            .Trim());
+        return _yggMapper.MapTorrentAge(
+            torrentHtml.Split("</span>")[1].Trim()
+        );
     }
 }
