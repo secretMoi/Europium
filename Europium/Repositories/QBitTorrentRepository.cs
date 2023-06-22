@@ -2,19 +2,18 @@
 using Europium.Models;
 using Europium.Repositories.Models;
 using Europium.Services.Apis.QBitTorrent;
+using Europium.Services.Apis.YggTorrent;
 
 namespace Europium.Repositories;
 
 public class QBitTorrentRepository
 {
-	private readonly YggTorrentRepository _yggTorrentRepository;
 	private static ApiToMonitor? _monitoredApi;
 	private static HttpClient? _httpClient;
 	private static CookieContainer? _cookies;
 
-	public QBitTorrentRepository(ApisToMonitorRepository apisToMonitorRepository, YggTorrentRepository yggTorrentRepository)
+	public QBitTorrentRepository(ApisToMonitorRepository apisToMonitorRepository)
 	{
-		_yggTorrentRepository = yggTorrentRepository;
 		_monitoredApi ??= apisToMonitorRepository.GetApiByCode(ApiCode.QBITTORRENT);
 
 		_cookies ??= new CookieContainer();
@@ -71,34 +70,14 @@ public class QBitTorrentRepository
 		return httpResponseMessage.IsSuccessStatusCode;
 	}
 	
-	// public async Task AddTorrent(string torrentFile)
-	// {
-	// 	//formData.Add(new StringContent("C:/Users/qBit/Downloads"), "savepath");
-	// 	// formData.Add(new StringContent("ui=" + _cookies?.GetAllCookies().First().Value), "cookie");
-	// 	// formData.Add(new StringContent("radarr"), "category");
-	// 	// formData.Add(new StringContent("true"), "skip_checking");
-	// 	// formData.Add(new StringContent("true"), "paused");
-	// 	//formData.Add(new StringContent("true"), "root_folder");
-	// 	
-	// 	HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/torrents/add");
-	// 	request.Headers.Add("User-Agent", "Fiddler");
-	// 	request.Headers.Add("Cookie", "SID=" + _cookies?.GetAllCookies().First().Value);
-	// 	request.Content = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
-	// 	
-	// 	HttpResponseMessage response = await _httpClient?.SendAsync(request)!;
-	// 	string responseContent = await response.Content.ReadAsStringAsync();
-	// 	return;
-	// }
-	
-	public async Task<bool> AddTorrent(int torrentId)
+	public async Task<bool> AddTorrent(byte[] torrentFile, string torrentName, MediaType mediaType)
 	{
 		await LoginAsync();
-		var streamContent = await _yggTorrentRepository.DownloadTorrentFile("https://www3.yggtorrent.do/engine/download_torrent?id=" + torrentId);
 
 		using var form = new MultipartFormDataContent();
-
-		var fileContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
-		form.Add(fileContent, "torrents", torrentId + ".torrent");
+		var fileContent = new ByteArrayContent(torrentFile);
+		form.Add(fileContent, "torrents", torrentName);
+		form.Add(new StringContent(GetCategory(mediaType)), "category");
 		
 		var response = await _httpClient?.PostAsync(_monitoredApi?.Url + "/api/v2/torrents/add", form)!;
 
@@ -125,5 +104,15 @@ public class QBitTorrentRepository
 	private CancellationToken CancellationToken()
 	{
 		return new CancellationTokenSource(new TimeSpan(0, 0, 5)).Token;
+	}
+
+	private string GetCategory(MediaType mediaType)
+	{
+		return mediaType switch
+		{
+			MediaType.Movie => "radarr",
+			MediaType.Serie or MediaType.Anime => "tv-sonarr",
+			_ => ""
+		};
 	}
 }

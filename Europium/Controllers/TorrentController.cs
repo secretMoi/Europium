@@ -1,4 +1,5 @@
-﻿using Europium.Services.Apis.QBitTorrent;
+﻿using Europium.Dtos;
+using Europium.Services.Apis.QBitTorrent;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Europium.Controllers;
@@ -33,12 +34,12 @@ public class TorrentController : ControllerBase
 		}
 	}
 
-	[HttpPost("add/{torrentId}")]
-	public async Task<IActionResult> AddTorrent(int torrentId)
+	[HttpPost("add")]
+	public async Task<IActionResult> AddTorrent([FromBody] AddTorrentDto addTorrentDto)
 	{
 		try
 		{
-			return Ok(await _torrentService.AddTorrent(torrentId));
+			return Ok(await _torrentService.AddTorrent(addTorrentDto.TorrentId, addTorrentDto.MediaType));
 		}
 		catch (Exception)
 		{

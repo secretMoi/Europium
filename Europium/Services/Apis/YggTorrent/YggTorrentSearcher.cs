@@ -53,7 +53,7 @@ public class YggTorrentSearcher
             {
                 Name = name,
                 PageUrl = pageUrl,
-                TorrentUrl = GetTorrentUrl(pageUrl),
+                TorrentId = GetTorrentUrl(pageUrl),
                 Size = GetTorrentSize(htmlSplit[5]),
                 Downloaded = GetTorrentDownloaded(htmlSplit[6]),
                 Seeders = GetTorrentSeeders(htmlSplit[7]),
@@ -113,9 +113,9 @@ public class YggTorrentSearcher
             .Replace("&amp;", "+");
     }
 
-    private string GetTorrentUrl(string pageUrl)
+    private int GetTorrentUrl(string pageUrl)
     {
-        return pageUrl.Split("/").Last().RemoveAfter("-");
+        return int.Parse(pageUrl.Split("/").Last().RemoveAfter("-"));
     }
 
     private long GetTorrentSize(string torrentHtml)

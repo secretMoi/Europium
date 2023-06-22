@@ -1,14 +1,17 @@
 ﻿using Europium.Repositories;
+using Europium.Services.Apis.YggTorrent;
 
 namespace Europium.Services.Apis.QBitTorrent;
 
 public class QBitTorrentService
 {
 	private readonly QBitTorrentRepository _qBitTorrentRepository;
+	private readonly YggTorrentRepository _yggTorrentRepository;
 
-	public QBitTorrentService(QBitTorrentRepository qBitTorrentRepository)
+	public QBitTorrentService(QBitTorrentRepository qBitTorrentRepository, YggTorrentRepository yggTorrentRepository)
 	{
 		_qBitTorrentRepository = qBitTorrentRepository;
+		_yggTorrentRepository = yggTorrentRepository;
 	}
 
 	public async Task<bool> IsUpAsync()
@@ -26,8 +29,9 @@ public class QBitTorrentService
 		return await _qBitTorrentRepository.DeleteTorrentAsync(torrentHash);
 	}
 
-	public async Task<bool> AddTorrent(int torrentId)
+	public async Task<bool> AddTorrent(int torrentId, MediaType mediaType)
 	{
-		return await _qBitTorrentRepository.AddTorrent(torrentId);
+		var streamContent = await _yggTorrentRepository.DownloadTorrentFile(torrentId);
+		return await _qBitTorrentRepository.AddTorrent(await streamContent.ReadAsByteArrayAsync(), torrentId + ".torrent", mediaType);
 	}
 }

@@ -65,11 +65,11 @@ public class YggTorrentRepository
         return pages;
     }
 
-    public async Task<StreamContent> DownloadTorrentFile(string url)
+    public async Task<StreamContent> DownloadTorrentFile(int torrentId)
     {
         await Login();
         
-        var responseFile = await _httpClient?.GetAsync(new Uri(url))!;
+        var responseFile = await _httpClient?.GetAsync(new Uri(_yggTorrent.Url + "/engine/download_torrent?id=" + torrentId))!;
         return new StreamContent(await responseFile.Content.ReadAsStreamAsync());
     }
 
@@ -93,7 +93,7 @@ public class YggTorrentRepository
             _loginExpiration = DateTime.Now.AddHours(2);
     }
 
-    private async Task<string> SearchTorrent(Dictionary<string, string> query)
+    private async Task<string> SearchTorrent(IDictionary<string, string> query)
     {
         var url = QueryHelpers.AddQueryString(_yggTorrent.Url + "/engine/search", query!);
         return await _httpClient?.GetStringAsync(
