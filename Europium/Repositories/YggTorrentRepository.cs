@@ -65,9 +65,12 @@ public class YggTorrentRepository
         return pages;
     }
 
-    public string GetDownloadTorrentUrl(string torrentId)
+    public async Task<StreamContent> DownloadTorrentFile(string url)
     {
-        return _yggTorrent.Url + "/engine/download_torrent?id=" + torrentId;
+        await Login();
+        
+        var responseFile = await _httpClient?.GetAsync(new Uri(url))!;
+        return new StreamContent(await responseFile.Content.ReadAsStreamAsync());
     }
 
     private async Task Login()

@@ -115,9 +115,7 @@ public class YggTorrentSearcher
 
     private string GetTorrentUrl(string pageUrl)
     {
-        var torrentId = pageUrl.Split("/").Last().RemoveAfter("-");
-
-        return _yggTorrentRepository.GetDownloadTorrentUrl(torrentId);
+        return pageUrl.Split("/").Last().RemoveAfter("-");
     }
 
     private long GetTorrentSize(string torrentHtml)

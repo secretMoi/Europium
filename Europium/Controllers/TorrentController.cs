@@ -27,9 +27,21 @@ public class TorrentController : ControllerBase
 		{
 			return Ok(await _torrentService.DeleteTorrentAsync(torrentHash));
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
-			Console.WriteLine(e);
+			return BadRequest();
+		}
+	}
+
+	[HttpPost("add/{torrentId}")]
+	public async Task<IActionResult> AddTorrent(int torrentId)
+	{
+		try
+		{
+			return Ok(await _torrentService.AddTorrent(torrentId));
+		}
+		catch (Exception)
+		{
 			return BadRequest();
 		}
 	}

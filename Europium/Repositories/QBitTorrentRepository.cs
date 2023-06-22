@@ -7,12 +7,14 @@ namespace Europium.Repositories;
 
 public class QBitTorrentRepository
 {
+	private readonly YggTorrentRepository _yggTorrentRepository;
 	private static ApiToMonitor? _monitoredApi;
 	private static HttpClient? _httpClient;
 	private static CookieContainer? _cookies;
 
-	public QBitTorrentRepository(ApisToMonitorRepository apisToMonitorRepository)
+	public QBitTorrentRepository(ApisToMonitorRepository apisToMonitorRepository, YggTorrentRepository yggTorrentRepository)
 	{
+		_yggTorrentRepository = yggTorrentRepository;
 		_monitoredApi ??= apisToMonitorRepository.GetApiByCode(ApiCode.QBITTORRENT);
 
 		_cookies ??= new CookieContainer();
@@ -40,7 +42,6 @@ public class QBitTorrentRepository
 	public async Task<List<TorrentInfo>?> GetAllAsync()
 	{
 		await LoginAsync();
-		//await AddTorrent("");
 		var response = await _httpClient?.GetAsync(_monitoredApi?.Url + "/api/v2/torrents/info?filter=all", CancellationToken())!;
 
 		if (response.StatusCode == HttpStatusCode.Forbidden)
@@ -70,29 +71,38 @@ public class QBitTorrentRepository
 		return httpResponseMessage.IsSuccessStatusCode;
 	}
 	
-	public async Task AddTorrent(string torrentFile)
+	// public async Task AddTorrent(string torrentFile)
+	// {
+	// 	//formData.Add(new StringContent("C:/Users/qBit/Downloads"), "savepath");
+	// 	// formData.Add(new StringContent("ui=" + _cookies?.GetAllCookies().First().Value), "cookie");
+	// 	// formData.Add(new StringContent("radarr"), "category");
+	// 	// formData.Add(new StringContent("true"), "skip_checking");
+	// 	// formData.Add(new StringContent("true"), "paused");
+	// 	//formData.Add(new StringContent("true"), "root_folder");
+	// 	
+	// 	HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/torrents/add");
+	// 	request.Headers.Add("User-Agent", "Fiddler");
+	// 	request.Headers.Add("Cookie", "SID=" + _cookies?.GetAllCookies().First().Value);
+	// 	request.Content = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
+	// 	
+	// 	HttpResponseMessage response = await _httpClient?.SendAsync(request)!;
+	// 	string responseContent = await response.Content.ReadAsStringAsync();
+	// 	return;
+	// }
+	
+	public async Task<bool> AddTorrent(int torrentId)
 	{
 		await LoginAsync();
-		MultipartFormDataContent formData = new MultipartFormDataContent("----------------------------6688794727912");
+		var streamContent = await _yggTorrentRepository.DownloadTorrentFile("https://www3.yggtorrent.do/engine/download_torrent?id=" + torrentId);
+
+		using var form = new MultipartFormDataContent();
+
+		var fileContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
+		form.Add(fileContent, "torrents", torrentId + ".torrent");
 		
-		formData.Add(new StringContent("https://www3.yggtorrent.do/engine/download_torrent?id=79791"), "urls");
-		//formData.Add(new StringContent("https://torcache.net/torrent/3B1A1469C180F447B77021074DBBCCAEF62611E8.torrent"), "urls");
-		
-		//formData.Add(new StringContent("C:/Users/qBit/Downloads"), "savepath");
-		// formData.Add(new StringContent("ui=" + _cookies?.GetAllCookies().First().Value), "cookie");
-		// formData.Add(new StringContent("radarr"), "category");
-		// formData.Add(new StringContent("true"), "skip_checking");
-		// formData.Add(new StringContent("true"), "paused");
-		//formData.Add(new StringContent("true"), "root_folder");
-		
-		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, _monitoredApi?.Url + "/api/v2/torrents/add");
-		request.Headers.Add("User-Agent", "Fiddler");
-		request.Headers.Add("Cookie", "SID=" + _cookies?.GetAllCookies().First().Value);
-		request.Content = formData;
-		
-		HttpResponseMessage response = await _httpClient?.SendAsync(request)!;
-		string responseContent = await response.Content.ReadAsStringAsync();
-		return;
+		var response = await _httpClient?.PostAsync(_monitoredApi?.Url + "/api/v2/torrents/add", form)!;
+
+		return response.IsSuccessStatusCode;
 	}
 
 	private async Task<bool> LoginAsync(bool skipLoginIfAlreadyLogged = false)

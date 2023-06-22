@@ -25,4 +25,9 @@ public class QBitTorrentService
 	{
 		return await _qBitTorrentRepository.DeleteTorrentAsync(torrentHash);
 	}
+
+	public async Task<bool> AddTorrent(int torrentId)
+	{
+		return await _qBitTorrentRepository.AddTorrent(torrentId);
+	}
 }
