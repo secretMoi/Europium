@@ -29,9 +29,9 @@ public class QBitTorrentService
 		return await _qBitTorrentRepository.DeleteTorrentAsync(torrentHash);
 	}
 
-	public async Task<bool> AddTorrent(int torrentId, MediaType mediaType)
+	public async Task AddTorrent(int torrentId, MediaType mediaType)
 	{
 		var streamContent = await _yggTorrentRepository.DownloadTorrentFile(torrentId);
-		return await _qBitTorrentRepository.AddTorrent(await streamContent.ReadAsByteArrayAsync(), torrentId + ".torrent", mediaType);
+		await _qBitTorrentRepository.AddTorrent(await streamContent.ReadAsByteArrayAsync(), torrentId + ".torrent", mediaType);
 	}
 }

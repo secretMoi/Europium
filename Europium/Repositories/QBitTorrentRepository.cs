@@ -70,7 +70,7 @@ public class QBitTorrentRepository
 		return httpResponseMessage.IsSuccessStatusCode;
 	}
 	
-	public async Task<bool> AddTorrent(byte[] torrentFile, string torrentName, MediaType mediaType)
+	public async Task AddTorrent(byte[] torrentFile, string torrentName, MediaType mediaType)
 	{
 		await LoginAsync();
 
@@ -80,8 +80,7 @@ public class QBitTorrentRepository
 		form.Add(new StringContent(GetCategory(mediaType)), "category");
 		
 		var response = await _httpClient?.PostAsync(_monitoredApi?.Url + "/api/v2/torrents/add", form)!;
-
-		return response.IsSuccessStatusCode;
+		response.EnsureSuccessStatusCode();
 	}
 
 	private async Task<bool> LoginAsync(bool skipLoginIfAlreadyLogged = false)

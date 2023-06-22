@@ -15,9 +15,8 @@ public class ApisToMonitorRepository
 		_mapper = mapper;
 	}
 	
-	public async Task<bool> SaveChangesAsync()
+	private async Task<bool> SaveChangesAsync()
 	{
-		// permet d'appliquer les modifications à la db
 		return await _europiumContext.SaveChangesAsync() >= 0;
 	}
 
@@ -38,7 +37,7 @@ public class ApisToMonitorRepository
 		return _europiumContext.ApisToMonitor.FirstOrDefault(api => api.Code.Equals(apiCode));
 	}
 
-	public async Task<ApiToMonitor?> GetApiByIdAsync(int id)
+	private async Task<ApiToMonitor?> GetApiByIdAsync(int id)
 	{
 		return await _europiumContext.ApisToMonitor
 			.Include(p => p.ApiUrls)

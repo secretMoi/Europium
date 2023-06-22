@@ -37,13 +37,7 @@ public class TorrentController : ControllerBase
 	[HttpPost("add")]
 	public async Task<IActionResult> AddTorrent([FromBody] AddTorrentDto addTorrentDto)
 	{
-		try
-		{
-			return Ok(await _torrentService.AddTorrent(addTorrentDto.TorrentId, addTorrentDto.MediaType));
-		}
-		catch (Exception)
-		{
-			return BadRequest();
-		}
+		await _torrentService.AddTorrent(addTorrentDto.TorrentId, addTorrentDto.MediaType);
+		return NoContent();
 	}
 }

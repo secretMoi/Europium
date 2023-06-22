@@ -2,8 +2,8 @@
 
 public class YggTorrentSearchDto
 {
-    public string Name { get; set; }
-    public string PageUrl { get; set; }
+    public string Name { get; set; } = null!;
+    public string PageUrl { get; set; } = null!;
     public int TorrentId { get; set; }
     public long Age { get; set; }
     public long Size { get; set; }
