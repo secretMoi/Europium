@@ -21,7 +21,7 @@ public class YggTorrentSearcher
     {
         var pages = await _yggTorrentRepository.SearchTorrents(torrentName);
 
-        if (pages.First().Contains("Aucun résultat"))
+        if (pages.Count == 0)
             throw new KeyNotFoundException();
 
         var torrents = new List<YggTorrentSearchDto>();
