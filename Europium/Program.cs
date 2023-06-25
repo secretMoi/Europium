@@ -74,12 +74,13 @@ var apiOptions = new ClientOptions
 builder.Services.AddSingleton(apiOptions);
 builder.Services.AddScoped<SizeMapper>();
 
-builder.Services.AddScoped<IPlexServerClient, PlexServerClient>();
-builder.Services.AddScoped<IPlexAccountClient, PlexAccountClient>();
-builder.Services.AddScoped<IPlexLibraryClient, PlexLibraryClient>();
-builder.Services.AddScoped<IApiService, ApiService>();
-builder.Services.AddScoped<IPlexFactory, PlexFactory>();
-builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
+// builder.Services.AddScoped<IPlexServerClient, PlexServerClient>();
+// builder.Services.AddScoped<IPlexAccountClient, PlexAccountClient>();
+// builder.Services.AddScoped<IPlexLibraryClient, PlexLibraryClient>();
+// builder.Services.AddScoped<IApiService, ApiService>();
+// builder.Services.AddScoped<IPlexFactory, PlexFactory>();
+// builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
+builder.Services.AddScoped<PlexRepository>();
 builder.Services.AddScoped<PlexService>();
 
 builder.Services.AddScoped<TheMovieDbRepository>();
