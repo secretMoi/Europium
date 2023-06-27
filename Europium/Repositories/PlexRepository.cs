@@ -11,13 +11,15 @@ public class PlexRepository
 {
 	private readonly EuropiumContext _context;
 	private readonly PlexMapper _plexMapper;
+	private readonly IWebHostEnvironment _env;
 	private static HttpClient? _httpClient;
 	private static ApiToMonitor? _plexApi;
 	
-	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context, PlexMapper plexMapper)
+	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context, PlexMapper plexMapper, IWebHostEnvironment env)
 	{
 		_context = context;
 		_plexMapper = plexMapper;
+		_env = env;
 		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
 
 		if (_httpClient is null)
@@ -43,13 +45,12 @@ public class PlexRepository
 	
 	public async Task<List<PlexDuplicateDto>> GetDuplicates(int sectionId)
 	{
-		var localUrl = _context.ApiUrls.First(x => x.ApiToMonitorId == _plexApi!.ApiToMonitorId && x.Url.Contains("aorus")).Url;
 		var query = new Dictionary<string, string>
 		{
 			["duplicate"] = "1"
 		};
 		
-		var response = await _httpClient?.GetStreamAsync(GetUri(localUrl + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
+		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 
 		return _plexMapper.MapDuplicates(xml);
@@ -71,5 +72,11 @@ public class PlexRepository
 		
 		AddToken(query);
 		return QueryHelpers.AddQueryString(url, query!);
+	}
+
+	private string GetPlexUrl()
+	{
+		var urlToUse = _env.IsDevelopment() ? "ovh" : "localhost";
+		return _context.ApiUrls.First(x => x.ApiToMonitorId == _plexApi!.ApiToMonitorId && x.Url.Contains(urlToUse)).Url;
 	}
 }
