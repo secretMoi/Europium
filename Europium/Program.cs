@@ -12,22 +12,17 @@ using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Plex.Api.Factories;
-using Plex.Library.Factories;
 using Plex.ServerApi;
-using Plex.ServerApi.Api;
-using Plex.ServerApi.Clients;
-using Plex.ServerApi.Clients.Interfaces;
 
-const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddNewtonsoftJson(s =>
-{
-	s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-	s.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-}
+	{
+		s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+		s.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+	}
 );
 
 builder.Configuration.AddJsonFile("appconfig.json", false, true);
@@ -35,9 +30,10 @@ builder.Configuration.AddJsonFile("appconfig.json", false, true);
 // initialise le service de connexion à la bdd
 builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
 
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy(name: MyAllowSpecificOrigins,
+	options.AddPolicy(name: myAllowSpecificOrigins,
 		policy  =>
 		{
 			policy.WithOrigins(
@@ -74,12 +70,7 @@ var apiOptions = new ClientOptions
 builder.Services.AddSingleton(apiOptions);
 builder.Services.AddScoped<SizeMapper>();
 
-// builder.Services.AddScoped<IPlexServerClient, PlexServerClient>();
-// builder.Services.AddScoped<IPlexAccountClient, PlexAccountClient>();
-// builder.Services.AddScoped<IPlexLibraryClient, PlexLibraryClient>();
-// builder.Services.AddScoped<IApiService, ApiService>();
-// builder.Services.AddScoped<IPlexFactory, PlexFactory>();
-// builder.Services.AddScoped<IPlexRequestsHttpClient, PlexRequestsHttpClient>();
+builder.Services.AddScoped<PlexMapper>();
 builder.Services.AddScoped<PlexRepository>();
 builder.Services.AddScoped<PlexService>();
 
@@ -139,7 +130,7 @@ app.UseStaticFiles(new StaticFileOptions
 	RequestPath = "/Ressources"
 });
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthorization();
 
