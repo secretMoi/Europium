@@ -24,6 +24,20 @@ public class PlexMapper
 
         return plexDuplicates;
     }
+    public List<PlexLibraryDto> MapLibraries(XDocument xml)
+    {
+        var plexDuplicates = new List<PlexLibraryDto>();
+        foreach (var videoElement in xml.Descendants("Directory"))
+        {
+            plexDuplicates.Add(new PlexLibraryDto
+            {
+                Id = (int)videoElement.Attribute("key"),
+                Title = (string)videoElement.Attribute("title") ?? string.Empty,
+            });
+        }
+
+        return plexDuplicates;
+    }
 
     private void MapPlexMedias(XElement element, List<PlexMediaDto> plexMedias)
     {

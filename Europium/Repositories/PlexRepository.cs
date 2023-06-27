@@ -55,6 +55,14 @@ public class PlexRepository
 
 		return _plexMapper.MapDuplicates(xml);
 	}
+
+	public async Task<List<PlexLibraryDto>> GetLibraries()
+	{
+		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/library/sections"), GetCancellationToken())!;
+		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
+
+		return _plexMapper.MapLibraries(xml);
+	}
 	
 	private void AddToken(IDictionary<string, string> parameters)
 	{

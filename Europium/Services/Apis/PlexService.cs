@@ -21,4 +21,9 @@ public class PlexService
 	{
 		return await _plexRepository.GetDuplicates(libraryId);
 	}
+
+	public async Task<List<PlexLibraryDto>> GetLibraries()
+	{
+		return await _plexRepository.GetLibraries();
+	}
 }

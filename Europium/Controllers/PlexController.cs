@@ -26,4 +26,10 @@ public class PlexController : ControllerBase
             return NotFound();
         }
     }
+    
+    [HttpGet("libraries")]
+    public async Task<IActionResult> GetLibraries()
+    {
+        return Ok(await _plexService.GetLibraries());
+    }
 }
