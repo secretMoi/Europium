@@ -44,7 +44,7 @@ public class PlexMapper
         };
 
         if (libraryType == PlexLibraryType.Serie)
-            duplicate.Title = (string)videoElement.Attribute("originalTitle") + " " +
+            duplicate.Title = (string)videoElement.Attribute("grandparentTitle") + " " +
                               (string)videoElement.Attribute("parentTitle") + " " +
                               (string)videoElement.Attribute("title");
 
