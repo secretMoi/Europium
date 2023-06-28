@@ -24,9 +24,7 @@ public class MonitorController : ControllerBase
 	[HttpGet("apis")]
 	public async Task<IActionResult> GetApisToMonitor()
 	{
-		var apis = await _europiumContext.ApisToMonitor.Include(p => p.ApiUrls).ToListAsync();
-
-		return Ok(apis);
+		return Ok(await _europiumContext.ApisToMonitor.Include(p => p.ApiUrls).ToListAsync());
 	}
 	
 	[HttpGet("api/{apiCode}")]
@@ -65,20 +63,5 @@ public class MonitorController : ControllerBase
 		var apiToMonitorAdded = (await _europiumContext.ApisToMonitor.AddAsync(apiToMonitor)).Entity;
 		await _europiumContext.SaveChangesAsync();
 		return Ok(apiToMonitorAdded);
-	}
-	
-	[HttpDelete("apis/{id}")]
-	public async Task<IActionResult> DeleteApiById(int id)
-	{
-		try
-		{
-			_europiumContext.ApisToMonitor.Remove(new ApiToMonitor { ApiToMonitorId = id});
-			await _europiumContext.SaveChangesAsync();
-			return Ok();
-		}
-		catch (Exception)
-		{
-			return NotFound();
-		}
 	}
 }

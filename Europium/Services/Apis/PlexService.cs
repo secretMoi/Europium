@@ -26,4 +26,9 @@ public class PlexService
 	{
 		return await _plexRepository.GetLibraries();
 	}
+
+	public async Task<bool> DeleteMedia(int mediaId, int fileId)
+	{
+		return await _plexRepository.DeleteMedia(mediaId, fileId);
+	}
 }

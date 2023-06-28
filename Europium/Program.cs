@@ -40,6 +40,7 @@ builder.Services.AddCors(options =>
 				builder.Configuration.GetSection("AllowedUrls").Get<string[]>()
 				
 				);
+			policy.WithMethods("GET", "POST", "DELETE", "PUT");
 			policy.WithHeaders("authorization", "accept", "content-type", "origin");
 		});
 });

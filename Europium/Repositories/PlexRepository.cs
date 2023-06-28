@@ -62,6 +62,12 @@ public class PlexRepository
 
 		return _plexMapper.MapLibraries(xml);
 	}
+
+	public async Task<bool> DeleteMedia(int mediaId, int fileId)
+	{
+		var response = await _httpClient?.DeleteAsync(GetUri(GetPlexUrl() + $"/library/metadata/{mediaId}/media/{fileId}"), GetCancellationToken())!;
+		return response.IsSuccessStatusCode;
+	}
 	
 	private void AddToken(IDictionary<string, string> parameters)
 	{

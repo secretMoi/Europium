@@ -33,4 +33,10 @@ public class PlexController : ControllerBase
     {
         return Ok(await _plexService.GetLibraries());
     }
+    
+    [HttpDelete("delete/media/{mediaId}/file/{fileId}")]
+    public async Task<IActionResult> DeleteMedia(int mediaId, int fileId)
+    {
+        return Ok(await _plexService.DeleteMedia(mediaId, fileId));
+    }
 }
