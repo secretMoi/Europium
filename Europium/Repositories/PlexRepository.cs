@@ -73,13 +73,11 @@ public class PlexRepository
 	{
 		var query = new Dictionary<string, string>
 		{
-			["width"] = "100",
-			["height"] = "100",
-			["url"] = $"/library/metadata/{parentId}/thumb/{thumbnailId}",
+			["width"] = "180",
+			["height"] = "180",
+			["url"] = $"/library/metadata/{parentId}/art/{thumbnailId}",
 		};
-		var stream = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/photo/:/transcode", query))!;
-
-		return stream;
+		return await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/photo/:/transcode", query))!;
 	}
 	
 	private void AddToken(IDictionary<string, string> parameters)
