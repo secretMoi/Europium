@@ -79,8 +79,8 @@ public class YggTorrentSearcher
     {
         name = name.ToLower();
         if (name.Contains("720")) return MediaQuality.HD;
-        if (name.Contains("1080")) return MediaQuality.FHD;
-        if (name.Contains("2160")) return MediaQuality.UHD;
+        if (name.Contains("1080") || name.Contains("fhd")) return MediaQuality.FHD;
+        if (name.Contains("2160") || name.Contains("uhd")) return MediaQuality.UHD;
 
         return MediaQuality.Unknown;
     }
