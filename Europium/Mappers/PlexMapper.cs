@@ -5,7 +5,27 @@ namespace Europium.Mappers;
 
 public class PlexMapper
 {
-    public List<PlexDuplicateDto> MapDuplicates(XDocument xml)
+    public List<PlexDuplicateDto> MapSeriesDuplicates(XDocument xml)
+    {
+        var plexDuplicates = new List<PlexDuplicateDto>();
+        foreach (var videoElement in xml.Descendants("Video"))
+        {
+            var plexDuplicate = new PlexDuplicateDto
+            {
+                Id = (int)videoElement.Attribute("ratingKey"),
+                Title = (string)videoElement.Attribute("originalTitle") + " " + (string)videoElement.Attribute("parentTitle") + " " + (string)videoElement.Attribute("title"),
+                PlexMedias = new List<PlexMediaDto>()
+            };
+
+            MapPlexMedias(videoElement, plexDuplicate.PlexMedias);
+
+            plexDuplicates.Add(plexDuplicate);
+        }
+
+        return plexDuplicates;
+    }
+
+    public List<PlexDuplicateDto> MapMovieDuplicates(XDocument xml)
     {
         var plexDuplicates = new List<PlexDuplicateDto>();
         foreach (var videoElement in xml.Descendants("Video"))
@@ -33,6 +53,7 @@ public class PlexMapper
             {
                 Id = (int)videoElement.Attribute("key"),
                 Title = (string)videoElement.Attribute("title") ?? string.Empty,
+                Type = (string)videoElement.Attribute("type") == "movie" ? PlexLibraryType.Movie : PlexLibraryType.Serie
             });
         }
 

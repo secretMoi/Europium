@@ -43,14 +43,18 @@ public class PlexRepository
 		}
 	}
 	
-	public async Task<List<PlexDuplicateDto>> GetDuplicates(int sectionId)
+	public async Task<List<PlexDuplicateDto>> GetDuplicates(PlexLibraryType libraryType, int sectionId)
 	{
 		var query = new Dictionary<string, string> { ["duplicate"] = "1" };
-		
+		if (libraryType == PlexLibraryType.Serie)
+			query.Add("type", "4");
+
 		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 
-		return _plexMapper.MapDuplicates(xml);
+		return libraryType == PlexLibraryType.Movie
+			? _plexMapper.MapMovieDuplicates(xml)
+			: _plexMapper.MapSeriesDuplicates(xml);
 	}
 
 	public async Task<List<PlexLibraryDto>> GetLibraries()

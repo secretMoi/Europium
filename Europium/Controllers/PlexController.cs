@@ -1,4 +1,5 @@
-﻿using Europium.Services.Apis;
+﻿using Europium.Dtos.Plex;
+using Europium.Services.Apis;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Europium.Controllers;
@@ -14,12 +15,12 @@ public class PlexController : ControllerBase
         _plexService = plexService;
     }
     
-    [HttpGet("duplicates/{libraryId}")]
-    public async Task<IActionResult> GetDuplicates(int libraryId)
+    [HttpGet("duplicates/{libraryType}/{libraryId}")]
+    public async Task<IActionResult> GetDuplicates(PlexLibraryType libraryType, int libraryId)
     {
         try
         {
-            return Ok(await _plexService.GetDuplicates(libraryId));
+            return Ok(await _plexService.GetDuplicates(libraryType, libraryId));
         }
         catch (KeyNotFoundException)
         {
