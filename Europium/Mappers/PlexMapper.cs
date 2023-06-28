@@ -5,45 +5,19 @@ namespace Europium.Mappers;
 
 public class PlexMapper
 {
-    public List<PlexDuplicateDto> MapSeriesDuplicates(XDocument xml)
+    public List<PlexDuplicateDto> MapDuplicates(XDocument xml, PlexLibraryType libraryType)
     {
         var plexDuplicates = new List<PlexDuplicateDto>();
         foreach (var videoElement in xml.Descendants("Video"))
         {
-            var plexDuplicate = new PlexDuplicateDto
-            {
-                Id = (int)videoElement.Attribute("ratingKey"),
-                Title = (string)videoElement.Attribute("originalTitle") + " " + (string)videoElement.Attribute("parentTitle") + " " + (string)videoElement.Attribute("title"),
-                PlexMedias = new List<PlexMediaDto>()
-            };
-
+            var plexDuplicate = MapDuplicate(videoElement, libraryType);
             MapPlexMedias(videoElement, plexDuplicate.PlexMedias);
-
             plexDuplicates.Add(plexDuplicate);
         }
 
         return plexDuplicates;
     }
-
-    public List<PlexDuplicateDto> MapMovieDuplicates(XDocument xml)
-    {
-        var plexDuplicates = new List<PlexDuplicateDto>();
-        foreach (var videoElement in xml.Descendants("Video"))
-        {
-            var plexDuplicate = new PlexDuplicateDto
-            {
-                Id = (int)videoElement.Attribute("ratingKey"),
-                Title = (string)videoElement.Attribute("title") ?? string.Empty,
-                PlexMedias = new List<PlexMediaDto>()
-            };
-
-            MapPlexMedias(videoElement, plexDuplicate.PlexMedias);
-
-            plexDuplicates.Add(plexDuplicate);
-        }
-
-        return plexDuplicates;
-    }
+    
     public List<PlexLibraryDto> MapLibraries(XDocument xml)
     {
         var plexDuplicates = new List<PlexLibraryDto>();
@@ -58,6 +32,23 @@ public class PlexMapper
         }
 
         return plexDuplicates;
+    }
+
+    private PlexDuplicateDto MapDuplicate(XElement videoElement, PlexLibraryType libraryType)
+    {
+        var duplicate = new PlexDuplicateDto
+        {
+            Id = (int)videoElement.Attribute("ratingKey"),
+            Title = (string)videoElement.Attribute("title") ?? string.Empty,
+            PlexMedias = new List<PlexMediaDto>()
+        };
+
+        if (libraryType == PlexLibraryType.Serie)
+            duplicate.Title = (string)videoElement.Attribute("originalTitle") + " " +
+                              (string)videoElement.Attribute("parentTitle") + " " +
+                              (string)videoElement.Attribute("title");
+
+        return duplicate;
     }
 
     private void MapPlexMedias(XElement element, List<PlexMediaDto> plexMedias)

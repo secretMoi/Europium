@@ -52,9 +52,7 @@ public class PlexRepository
 		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 
-		return libraryType == PlexLibraryType.Movie
-			? _plexMapper.MapMovieDuplicates(xml)
-			: _plexMapper.MapSeriesDuplicates(xml);
+		return _plexMapper.MapDuplicates(xml, libraryType);
 	}
 
 	public async Task<List<PlexLibraryDto>> GetLibraries()
