@@ -11,7 +11,8 @@ public class PlexMapper
         foreach (var videoElement in xml.Descendants("Video"))
         {
             var plexDuplicate = MapDuplicate(videoElement, libraryType);
-            MapPlexMedias(videoElement, plexDuplicate.PlexMedias);
+            MapPlexMedias(videoElement, plexDuplicate);
+            plexDuplicate.TotalSize = plexDuplicate.PlexMedias.Sum(x => x.Size);
             plexDuplicates.Add(plexDuplicate);
         }
 
@@ -51,9 +52,9 @@ public class PlexMapper
         return duplicate;
     }
 
-    private void MapPlexMedias(XElement element, List<PlexMediaDto> plexMedias)
+    private void MapPlexMedias(XElement element, PlexDuplicateDto plexDuplicate)
     {
-        plexMedias.AddRange(element.Descendants("Media").Select(MapPlexMedia));
+        plexDuplicate.PlexMedias.AddRange(element.Descendants("Media").Select(MapPlexMedia));
     }
 
     private PlexMediaDto MapPlexMedia(XElement mediaElement)
