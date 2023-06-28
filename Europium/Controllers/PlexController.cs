@@ -39,4 +39,10 @@ public class PlexController : ControllerBase
     {
         return Ok(await _plexService.DeleteMedia(mediaId, fileId));
     }
+    
+    [HttpGet("thumbnail/{parentId}/{thumbnailId}")]
+    public async Task<IActionResult> GetThumbnail(int parentId, int thumbnailId)
+    {
+        return Ok(await _plexService.GetThumbnail(parentId, thumbnailId));
+    }
 }

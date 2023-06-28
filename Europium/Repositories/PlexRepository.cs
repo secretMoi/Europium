@@ -69,6 +69,19 @@ public class PlexRepository
 		return response.IsSuccessStatusCode;
 	}
 	
+	public async Task<Stream> GetThumbnail(int parentId, int thumbnailId)
+	{
+		var query = new Dictionary<string, string>
+		{
+			["width"] = "100",
+			["height"] = "100",
+			["url"] = $"/library/metadata/{parentId}/thumb/{thumbnailId}",
+		};
+		var stream = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/photo/:/transcode", query))!;
+
+		return stream;
+	}
+	
 	private void AddToken(IDictionary<string, string> parameters)
 	{
 		parameters.Add("X-Plex-Token", _plexApi?.ApiKey!);

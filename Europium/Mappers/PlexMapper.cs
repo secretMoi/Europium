@@ -41,6 +41,8 @@ public class PlexMapper
         {
             Id = (int)videoElement.Attribute("ratingKey"),
             Title = (string)videoElement.Attribute("title") ?? string.Empty,
+            ParentId = (int)videoElement.Attribute("grandparentRatingKey"),
+            ThumbnailId = int.Parse(((string)videoElement.Attribute("grandparentThumb") ?? "").Split('/').Last()),
             PlexMedias = new List<PlexMediaDto>()
         };
 
