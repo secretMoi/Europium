@@ -120,7 +120,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 var configProgram = app.Services.GetService<ConfigProgram>()!;
 app.UseStaticFiles(new StaticFileOptions
