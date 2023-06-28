@@ -74,7 +74,7 @@ public class PlexRepository
 		var query = new Dictionary<string, string>
 		{
 			["width"] = "180",
-			["height"] = "180",
+			["height"] = "145",
 			["url"] = $"/library/metadata/{parentId}/art/{thumbnailId}",
 		};
 		return await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/photo/:/transcode", query))!;
