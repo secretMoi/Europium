@@ -64,7 +64,8 @@ public class PlexMapper
             Bitrate = (int)mediaElement.Attribute("bitrate"),
             Resolution = (string)mediaElement.Attribute("videoResolution") ?? string.Empty,
             FilePath = (string)mediaElement.Element("Part")?.Attribute("file") ?? string.Empty,
-            Size = (long)mediaElement.Element("Part")!.Attribute("size"),
+            VideoCodec = (string)mediaElement.Attribute("videoCodec") ?? string.Empty,
+            Size = (long)mediaElement.Element("Part")!.Attribute("size")
         };
     }
 }
