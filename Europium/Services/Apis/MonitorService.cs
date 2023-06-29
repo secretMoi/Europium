@@ -17,7 +17,7 @@ public class MonitorService
 
 	private readonly ApisToMonitorRepository _monitorRepository;
 
-	private readonly AppConfig AppConfig;
+	private readonly AppConfig _appConfig;
 
 	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot,
 		ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService,
@@ -30,7 +30,7 @@ public class MonitorService
 		_jackettService = jackettService;
 		_qBitTorrentService = qBitTorrentService;
 		_tautulliService = tautulliService;
-		AppConfig = optionsSnapshot.Value;
+		_appConfig = optionsSnapshot.Value;
 	}
 
 	public async Task<bool?> VerifySingleApiState(string code, string url)
@@ -52,7 +52,6 @@ public class MonitorService
 
 		if (ApiCode.PLEX.Equals(code))
 		{
-			// var servers = await _plexService.PlexAccount.ServerSummaries();
 			return await _plexService.IsUpAsync(url);
 		}
 
@@ -76,7 +75,7 @@ public class MonitorService
 			return null;
 		}
 
-		var byteImage = await File.ReadAllBytesAsync($"{AppConfig.ApiToMonitorImagePath}/{imageName}");
+		var byteImage = await File.ReadAllBytesAsync($"{_appConfig.ApiToMonitorImagePath}/{imageName}");
 		string imageFormat;
 
 		if (imageName.EndsWith(".svg"))

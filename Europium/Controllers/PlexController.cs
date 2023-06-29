@@ -45,4 +45,10 @@ public class PlexController : ControllerBase
     {
         return Ok(await _plexService.GetThumbnail(parentId, thumbnailId));
     }
+    
+    [HttpGet("restart")]
+    public IActionResult Restart()
+    {
+        return _plexService.Restart() ? NoContent() : StatusCode(500);
+    }
 }

@@ -41,21 +41,14 @@ public class PlexMapper
             ? (string)videoElement.Attribute("thumb")
             : (string)videoElement.Attribute("grandparentThumb");
         
-        var duplicate = new PlexDuplicateDto
+        return new PlexDuplicateDto
         {
             Id = (int)videoElement.Attribute("ratingKey"),
-            Title = (string)videoElement.Attribute("title") ?? string.Empty,
+            Title = (string)videoElement.Attribute(libraryType == PlexLibraryType.Movie ? "title" : "grandparentTitle") ?? string.Empty,
             ParentId = libraryType == PlexLibraryType.Movie ? (int)videoElement.Attribute("ratingKey") : (int)videoElement.Attribute("grandparentRatingKey"),
             ThumbnailId = int.Parse(thumbnail!.Split('/').Last()),
             PlexMedias = new List<PlexMediaDto>()
         };
-
-        if (libraryType == PlexLibraryType.Serie)
-            duplicate.Title = (string)videoElement.Attribute("grandparentTitle") + " " +
-                              (string)videoElement.Attribute("parentTitle") + " " +
-                              (string)videoElement.Attribute("title");
-
-        return duplicate;
     }
 
     private void MapPlexMedias(XElement element, PlexDuplicateDto plexDuplicate)
