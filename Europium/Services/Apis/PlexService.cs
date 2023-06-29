@@ -57,19 +57,4 @@ public class PlexService
 		var restartedProcesses = Process.GetProcessesByName(processName);
 		return restartedProcesses.Length > 0;
 	}
-	
-	// var process = new Process();
-	// var startInfo = new ProcessStartInfo
-	// {
-	// 	WindowStyle = ProcessWindowStyle.Hidden,
-	// 	FileName = "cmd.exe",
-	// 	Arguments = "/C (TASKKILL /f /im \"notepad.exe\") & (start notepad.exe)",
-	// 	RedirectStandardError = true,
-	// 	RedirectStandardOutput = true
-	// };
-	// process.StartInfo = startInfo;
-	// process.Start();
-	// using var standardError = process.StandardError;
-	// var t = await standardError.ReadLineAsync();
-	// 	return (t).Length == 0;
 }
