@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
 using Europium.Dtos.Plex;
 using Europium.Mappers;
+using Europium.Mappers.Plex;
 using Europium.Models;
 using Europium.Repositories.Models;
 using Microsoft.AspNetCore.WebUtilities;
@@ -11,16 +12,21 @@ public class PlexRepository
 {
 	private readonly EuropiumContext _context;
 	private readonly PlexMapper _plexMapper;
+	private readonly PlexSessionMapper _plexSessionMapper;
 	private readonly IWebHostEnvironment _env;
 	private static HttpClient? _httpClient;
 	private static ApiToMonitor? _plexApi;
-	
-	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context, PlexMapper plexMapper, IWebHostEnvironment env)
+	private static string? _plexUrl;
+
+	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context, PlexMapper plexMapper, PlexSessionMapper plexSessionMapper, IWebHostEnvironment env)
 	{
 		_context = context;
 		_plexMapper = plexMapper;
+		_plexSessionMapper = plexSessionMapper;
 		_env = env;
+		
 		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
+		_plexUrl ??= GetPlexUrl();
 
 		if (_httpClient is null)
 		{
@@ -43,21 +49,21 @@ public class PlexRepository
 		}
 	}
 	
-	public async Task<List<PlexDuplicateDto>> GetDuplicates(PlexLibraryType libraryType, int sectionId)
+	public async Task<List<PlexDuplicate>> GetDuplicates(PlexLibraryType libraryType, int sectionId)
 	{
 		var query = new Dictionary<string, string> { ["duplicate"] = "1" };
 		if (libraryType == PlexLibraryType.Serie)
 			query.Add("type", "4");
 
-		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + $"/library/sections/{sectionId}/all", query), GetCancellationToken())!;
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 
 		return _plexMapper.MapDuplicates(xml, libraryType);
 	}
 
-	public async Task<List<PlexLibraryDto>> GetLibraries()
+	public async Task<List<PlexLibrary>> GetLibraries()
 	{
-		var response = await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/library/sections"), GetCancellationToken())!;
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/library/sections"), GetCancellationToken())!;
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 
 		return _plexMapper.MapLibraries(xml);
@@ -65,7 +71,7 @@ public class PlexRepository
 
 	public async Task<bool> DeleteMedia(int mediaId, int fileId)
 	{
-		var response = await _httpClient?.DeleteAsync(GetUri(GetPlexUrl() + $"/library/metadata/{mediaId}/media/{fileId}"), GetCancellationToken())!;
+		var response = await _httpClient?.DeleteAsync(GetUri(_plexUrl + $"/library/metadata/{mediaId}/media/{fileId}"), GetCancellationToken())!;
 		return response.IsSuccessStatusCode;
 	}
 	
@@ -77,7 +83,15 @@ public class PlexRepository
 			["height"] = "145",
 			["url"] = $"/library/metadata/{parentId}/art/{thumbnailId}",
 		};
-		return await _httpClient?.GetStreamAsync(GetUri(GetPlexUrl() + "/photo/:/transcode", query))!;
+		return await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/photo/:/transcode", query))!;
+	}
+
+	public async Task<List<PlexPlayingMedia>> GetPlayingMedias()
+	{
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/status/sessions"), GetCancellationToken())!;
+		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
+		
+		return _plexSessionMapper.MapPlayingMedias(xml);
 	}
 	
 	private void AddToken(IDictionary<string, string> parameters)

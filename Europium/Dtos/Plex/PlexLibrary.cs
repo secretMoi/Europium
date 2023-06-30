@@ -1,6 +1,6 @@
 ﻿namespace Europium.Dtos.Plex;
 
-public class PlexLibraryDto
+public class PlexLibrary
 {
     public int Id { get; set; }
     public PlexLibraryType Type { get; set; }

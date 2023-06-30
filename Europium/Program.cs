@@ -1,5 +1,6 @@
 using Europium;
 using Europium.Mappers;
+using Europium.Mappers.Plex;
 using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Ssh;
@@ -72,6 +73,7 @@ builder.Services.AddSingleton(apiOptions);
 builder.Services.AddScoped<SizeMapper>();
 
 builder.Services.AddScoped<PlexMapper>();
+builder.Services.AddScoped<PlexSessionMapper>();
 builder.Services.AddScoped<PlexRepository>();
 builder.Services.AddScoped<PlexService>();
 

@@ -1,6 +1,6 @@
 ﻿namespace Europium.Dtos.Plex;
 
-public class PlexDuplicateDto
+public class PlexDuplicate
 {
     public int Id { get; set; }
     public int ParentId { get; set; }
@@ -8,5 +8,5 @@ public class PlexDuplicateDto
     public string Title { get; set; }
     public long TotalSize { get; set; }
 
-    public List<PlexMediaDto> PlexMedias { get; set; }
+    public List<PlexMedia> PlexMedias { get; set; }
 }

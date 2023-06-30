@@ -1,6 +1,6 @@
 ﻿namespace Europium.Dtos.Plex;
 
-public class PlexMediaDto
+public class PlexMedia
 {
     public int Id { get; set; }
     public int Bitrate { get; set; }

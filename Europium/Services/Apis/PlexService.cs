@@ -18,12 +18,12 @@ public class PlexService
 		return await _plexRepository.IsUpAsync(url);
 	}
 
-	public async Task<List<PlexDuplicateDto>> GetDuplicates(PlexLibraryType libraryType, int libraryId)
+	public async Task<List<PlexDuplicate>> GetDuplicates(PlexLibraryType libraryType, int libraryId)
 	{
 		return await _plexRepository.GetDuplicates(libraryType, libraryId);
 	}
 
-	public async Task<List<PlexLibraryDto>> GetLibraries()
+	public async Task<List<PlexLibrary>> GetLibraries()
 	{
 		return await _plexRepository.GetLibraries();
 	}
@@ -57,4 +57,10 @@ public class PlexService
 		var restartedProcesses = Process.GetProcessesByName(processName);
 		return restartedProcesses.Length > 0;
 	}
+
+	public async Task<List<PlexPlayingMedia>> GetPlayingMedias()
+	{
+		return await _plexRepository.GetPlayingMedias();
+	}
+
 }

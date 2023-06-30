@@ -51,4 +51,10 @@ public class PlexController : ControllerBase
     {
         return _plexService.Restart() ? NoContent() : StatusCode(500);
     }
+    
+    [HttpGet("medias/playing")]
+    public async Task<IActionResult> GetPlayingMedias()
+    {
+        return Ok(await _plexService.GetPlayingMedias());
+    }
 }

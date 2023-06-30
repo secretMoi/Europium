@@ -1,13 +1,13 @@
 ﻿using System.Xml.Linq;
 using Europium.Dtos.Plex;
 
-namespace Europium.Mappers;
+namespace Europium.Mappers.Plex;
 
 public class PlexMapper
 {
-    public List<PlexDuplicateDto> MapDuplicates(XDocument xml, PlexLibraryType libraryType)
+    public List<PlexDuplicate> MapDuplicates(XDocument xml, PlexLibraryType libraryType)
     {
-        var plexDuplicates = new List<PlexDuplicateDto>();
+        var plexDuplicates = new List<PlexDuplicate>();
         foreach (var videoElement in xml.Descendants("Video"))
         {
             var plexDuplicate = MapDuplicate(videoElement, libraryType);
@@ -19,12 +19,12 @@ public class PlexMapper
         return plexDuplicates;
     }
     
-    public List<PlexLibraryDto> MapLibraries(XDocument xml)
+    public List<PlexLibrary> MapLibraries(XDocument xml)
     {
-        var plexDuplicates = new List<PlexLibraryDto>();
+        var plexDuplicates = new List<PlexLibrary>();
         foreach (var videoElement in xml.Descendants("Directory"))
         {
-            plexDuplicates.Add(new PlexLibraryDto
+            plexDuplicates.Add(new PlexLibrary
             {
                 Id = (int)videoElement.Attribute("key"),
                 Title = (string)videoElement.Attribute("title") ?? string.Empty,
@@ -35,30 +35,30 @@ public class PlexMapper
         return plexDuplicates;
     }
 
-    private PlexDuplicateDto MapDuplicate(XElement videoElement, PlexLibraryType libraryType)
+    private PlexDuplicate MapDuplicate(XElement videoElement, PlexLibraryType libraryType)
     {
         var thumbnail = libraryType == PlexLibraryType.Movie
             ? (string)videoElement.Attribute("thumb")
             : (string)videoElement.Attribute("grandparentThumb");
         
-        return new PlexDuplicateDto
+        return new PlexDuplicate
         {
             Id = (int)videoElement.Attribute("ratingKey"),
             Title = (string)videoElement.Attribute(libraryType == PlexLibraryType.Movie ? "title" : "grandparentTitle") ?? string.Empty,
             ParentId = libraryType == PlexLibraryType.Movie ? (int)videoElement.Attribute("ratingKey") : (int)videoElement.Attribute("grandparentRatingKey"),
             ThumbnailId = int.Parse(thumbnail!.Split('/').Last()),
-            PlexMedias = new List<PlexMediaDto>()
+            PlexMedias = new List<PlexMedia>()
         };
     }
 
-    private void MapPlexMedias(XElement element, PlexDuplicateDto plexDuplicate)
+    private void MapPlexMedias(XElement element, PlexDuplicate plexDuplicate)
     {
         plexDuplicate.PlexMedias.AddRange(element.Descendants("Media").Select(MapPlexMedia));
     }
 
-    private PlexMediaDto MapPlexMedia(XElement mediaElement)
+    private PlexMedia MapPlexMedia(XElement mediaElement)
     {
-        return new PlexMediaDto
+        return new PlexMedia
         {
             Id = (int)mediaElement.Attribute("id"),
             Bitrate = (int)mediaElement.Attribute("bitrate"),
