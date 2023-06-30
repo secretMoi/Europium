@@ -43,7 +43,14 @@ public class PlexController : ControllerBase
     [HttpGet("thumbnail/{parentId}/{thumbnailId}")]
     public async Task<IActionResult> GetThumbnail(int parentId, int thumbnailId)
     {
-        return Ok(await _plexService.GetThumbnail(parentId, thumbnailId));
+        try
+        {
+            return Ok(await _plexService.GetThumbnail(parentId, thumbnailId));
+        }
+        catch (Exception)
+        {
+            return NotFound();
+        }
     }
     
     [HttpGet("restart")]

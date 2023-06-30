@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Plex.ServerApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,16 +59,6 @@ builder.Services.AddSingleton<ConfigProgram>();
 builder.Services.AddScoped<ApisToMonitorRepository>();
 builder.Services.AddScoped<ApiUrlRepository>();
 
-// Create Client Options
-var apiOptions = new ClientOptions
-{
-	Product = "API_UnitTests",
-	DeviceName = "API_UnitTests",
-	ClientId = "MyClientId",
-	Platform = "Web",
-	Version = "v1"
-};
-builder.Services.AddSingleton(apiOptions);
 builder.Services.AddScoped<SizeMapper>();
 
 builder.Services.AddScoped<PlexMapper>();

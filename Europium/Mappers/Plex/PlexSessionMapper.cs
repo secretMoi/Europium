@@ -14,8 +14,8 @@ public class PlexSessionMapper
     {
         return new PlexPlayingMedia
         {
-            Id = (int)videoElement.Attribute("ratingKey"),
-            Title = (string)videoElement.Attribute("originalTitle") ?? "",
+            Id = (int?)videoElement.Attribute("grandparentRatingKey") ?? (int)videoElement.Attribute("ratingKey"),
+            Title = GetTitle(videoElement),
             RemoteBitrate = (int)videoElement.Element("Session")!.Attribute("bandwidth"),
             IsRemote = (string)videoElement.Element("Session")?.Attribute("location") == "wan",
             IsPlaying = (string)videoElement.Element("Player")?.Attribute("state") == "playing",
@@ -42,5 +42,11 @@ public class PlexSessionMapper
     private bool IsTranscoding(string isTranscoding)
     {
         return isTranscoding == "transcode";
+    }
+
+    private string GetTitle(XElement videoElement)
+    {
+        return (string)videoElement.Attribute("grandparentTitle") ??
+               (string)videoElement.Attribute("title") ?? "";
     }
 }
