@@ -1,7 +1,6 @@
 ﻿using Europium.Dtos;
 using Europium.Services.Apis.YggTorrent;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Europium.Controllers;
 
