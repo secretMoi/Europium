@@ -12,16 +12,20 @@ public class PlexRepository
 	private readonly EuropiumContext _context;
 	private readonly PlexMapper _plexMapper;
 	private readonly PlexSessionMapper _plexSessionMapper;
+	private readonly PlexHistoryMapper _plexHistoryMapper;
 	private readonly IWebHostEnvironment _env;
 	private static HttpClient? _httpClient;
 	private static ApiToMonitor? _plexApi;
 	private static string? _plexUrl;
 
-	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context, PlexMapper plexMapper, PlexSessionMapper plexSessionMapper, IWebHostEnvironment env)
+	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context,
+		PlexMapper plexMapper, PlexSessionMapper plexSessionMapper, PlexHistoryMapper plexHistoryMapper,
+		IWebHostEnvironment env)
 	{
 		_context = context;
 		_plexMapper = plexMapper;
 		_plexSessionMapper = plexSessionMapper;
+		_plexHistoryMapper = plexHistoryMapper;
 		_env = env;
 		
 		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
@@ -91,6 +95,25 @@ public class PlexRepository
 		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
 		
 		return _plexSessionMapper.MapPlayingMedias(xml);
+	}
+
+	public async Task<List<PlexMediaHistory>> GetHistory(PlexHistoryFilters filters)
+	{
+		var query = new Dictionary<string, string>
+		{
+			["sort"] = "viewedAt:desc"
+		};
+		if (filters.LibraryId.HasValue)
+			query["librarySectionID"] = filters.LibraryId.Value.ToString();
+		if (filters.UserId.HasValue)
+			query["accountID"] = filters.UserId.Value.ToString();
+		if (filters.Since.HasValue)
+			query["viewedAt>"] = filters.Since.Value.ToString();
+		
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/status/sessions/history/all", query), GetCancellationToken())!;
+		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
+		
+		return _plexHistoryMapper.MapMediasHistory(xml);
 	}
 	
 	private void AddToken(IDictionary<string, string> parameters)

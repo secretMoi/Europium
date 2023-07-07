@@ -64,4 +64,10 @@ public class PlexController : ControllerBase
     {
         return Ok(await _plexService.GetPlayingMedias());
     }
+    
+    [HttpGet("medias/history")]
+    public async Task<IActionResult> GetMediasHistory([FromQuery] PlexHistoryFilters plexHistoryFilters)
+    {
+        return Ok(await _plexService.GetMediasHistory(plexHistoryFilters));
+    }
 }

@@ -63,4 +63,8 @@ public class PlexService
 		return await _plexRepository.GetPlayingMedias();
 	}
 
+	public async Task<List<PlexMediaHistory>> GetMediasHistory(PlexHistoryFilters plexHistoryFilters)
+	{
+		return await _plexRepository.GetHistory(plexHistoryFilters);
+	}
 }

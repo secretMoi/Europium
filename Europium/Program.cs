@@ -63,6 +63,7 @@ builder.Services.AddScoped<SizeMapper>();
 
 builder.Services.AddScoped<PlexMapper>();
 builder.Services.AddScoped<PlexSessionMapper>();
+builder.Services.AddScoped<PlexHistoryMapper>();
 builder.Services.AddScoped<PlexRepository>();
 builder.Services.AddScoped<PlexService>();
 
