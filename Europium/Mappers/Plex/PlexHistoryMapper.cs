@@ -8,10 +8,10 @@ public class PlexHistoryMapper
 {
     public List<PlexMediaHistory> MapMediasHistory(XDocument xml)
     {
-        return xml.Descendants("Video").Select(MapPlayingMedia).ToList();
+        return xml.Descendants("Video").Select(MapMediaHistory).ToList();
     }
 
-    private PlexMediaHistory MapPlayingMedia(XElement video)
+    private PlexMediaHistory MapMediaHistory(XElement video)
     {
         return new PlexMediaHistory
         {
