@@ -13,6 +13,7 @@ public class PlexRepository
 	private readonly PlexMapper _plexMapper;
 	private readonly PlexSessionMapper _plexSessionMapper;
 	private readonly PlexHistoryMapper _plexHistoryMapper;
+	private readonly PlexUserMapper _plexUserMapper;
 	private readonly IWebHostEnvironment _env;
 	private static HttpClient? _httpClient;
 	private static ApiToMonitor? _plexApi;
@@ -20,12 +21,14 @@ public class PlexRepository
 
 	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context,
 		PlexMapper plexMapper, PlexSessionMapper plexSessionMapper, PlexHistoryMapper plexHistoryMapper,
+		PlexUserMapper plexUserMapper,
 		IWebHostEnvironment env)
 	{
 		_context = context;
 		_plexMapper = plexMapper;
 		_plexSessionMapper = plexSessionMapper;
 		_plexHistoryMapper = plexHistoryMapper;
+		_plexUserMapper = plexUserMapper;
 		_env = env;
 		
 		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
@@ -109,13 +112,22 @@ public class PlexRepository
 			query["accountID"] = filters.UserId.Value.ToString();
 		if (filters.Since.HasValue)
 			query["viewedAt>"] = filters.Since.Value.ToString();
-		
-		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/status/sessions/history/all", query), GetCancellationToken())!;
-		var xml = await XDocument.LoadAsync(response, LoadOptions.None, GetCancellationToken());
-		
-		return _plexHistoryMapper.MapMediasHistory(xml);
+
+		var getHistory = _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/status/sessions/history/all", query), GetCancellationToken());
+		var getUsers = GetUsers();
+
+		await Task.WhenAll(getHistory!, getUsers);
+
+		return await _plexHistoryMapper.MapMediasHistory(getHistory.Result, getUsers.Result);
 	}
-	
+
+	private async Task<List<PlexUser>> GetUsers()
+	{
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/accounts"), GetCancellationToken())!;
+
+		return await _plexUserMapper.MapUsers(response);
+	}
+
 	private void AddToken(IDictionary<string, string> parameters)
 	{
 		parameters.Add("X-Plex-Token", _plexApi?.ApiKey!);

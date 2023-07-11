@@ -4,14 +4,15 @@ using Europium.Services.Apis.YggTorrent;
 
 namespace Europium.Mappers.Plex;
 
-public class PlexHistoryMapper
+public class PlexHistoryMapper : BaseMapper
 {
-    public List<PlexMediaHistory> MapMediasHistory(XDocument xml)
+    public async Task<List<PlexMediaHistory>> MapMediasHistory(Stream plexMediasHistory, List<PlexUser> plexUsers)
     {
-        return xml.Descendants("Video").Select(MapMediaHistory).ToList();
+        var xml = await XDocument.LoadAsync(plexMediasHistory, LoadOptions.None, GetCancellationToken());
+        return xml.Descendants("Video").Select(x => MapMediaHistory(x, plexUsers)).ToList();
     }
 
-    private PlexMediaHistory MapMediaHistory(XElement video)
+    private PlexMediaHistory MapMediaHistory(XElement video, List<PlexUser> plexUsers)
     {
         return new PlexMediaHistory
         {
@@ -19,7 +20,13 @@ public class PlexHistoryMapper
             Title = GetTitle(video),
             MediaType = GetMediaType(video),
             SeenAt = (long)video.Attribute("viewedAt"),
+            User = GetUser(video, plexUsers)
         };
+    }
+
+    private string GetUser(XElement video, List<PlexUser> plexUsers)
+    {
+        return plexUsers.FirstOrDefault(x => x.Id == (int)video.Attribute("accountID"))?.Name ?? "";
     }
 
     private string GetTitle(XElement video)

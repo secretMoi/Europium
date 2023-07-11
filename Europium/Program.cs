@@ -62,6 +62,7 @@ builder.Services.AddScoped<ApiUrlRepository>();
 builder.Services.AddScoped<SizeMapper>();
 
 builder.Services.AddScoped<PlexMapper>();
+builder.Services.AddScoped<PlexUserMapper>();
 builder.Services.AddScoped<PlexSessionMapper>();
 builder.Services.AddScoped<PlexHistoryMapper>();
 builder.Services.AddScoped<PlexRepository>();
