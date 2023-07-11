@@ -41,11 +41,13 @@ public class PlexController : ControllerBase
     }
     
     [HttpGet("thumbnail/{parentId}/{thumbnailId}")]
-    public async Task<IActionResult> GetThumbnail(int parentId, int thumbnailId)
+    public async Task<IActionResult> GetThumbnail(int parentId, int thumbnailId, [FromQuery] PlexThumbnailParameters thumbnailParameters)
     {
         try
         {
-            return Ok(await _plexService.GetThumbnail(parentId, thumbnailId));
+            thumbnailParameters.ParentId = parentId;
+            thumbnailParameters.ThumbnailId = thumbnailId;
+            return Ok(await _plexService.GetThumbnail(thumbnailParameters));
         }
         catch (Exception)
         {

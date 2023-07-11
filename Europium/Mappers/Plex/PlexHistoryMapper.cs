@@ -20,8 +20,16 @@ public class PlexHistoryMapper : BaseMapper
             Title = GetTitle(video),
             MediaType = GetMediaType(video),
             SeenAt = (long)video.Attribute("viewedAt"),
-            User = GetUser(video, plexUsers)
+            User = GetUser(video, plexUsers),
+            ParentId = GetKey(video, "grandparentKey"),
+            ThumbnailId = GetKey(video, "grandparentArt"),
         };
+    }
+
+    private int GetKey(XElement video, string key)
+    {
+        var text = ((string)video.Attribute(key) ?? "").Split('/').Last();
+        return int.Parse(string.IsNullOrEmpty(text) ? "0" : text);
     }
 
     private string GetUser(XElement video, List<PlexUser> plexUsers)

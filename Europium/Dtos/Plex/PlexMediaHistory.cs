@@ -9,4 +9,6 @@ public class PlexMediaHistory
     public string Title { get; set; }
     public MediaType MediaType { get; set; }
     public long SeenAt { get; set; }
+    public int ParentId { get; set; }
+    public int ThumbnailId { get; set; }
 }
