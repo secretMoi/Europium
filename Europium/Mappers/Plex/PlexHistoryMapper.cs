@@ -14,23 +14,24 @@ public class PlexHistoryMapper : BaseMapper
 
     private PlexMediaHistory MapMediaHistory(XElement video, List<PlexUser> plexUsers, List<PlexDevice> plexDevices)
     {
+        int? id = video.Attribute("ratingKey") is not null ? (int)video.Attribute("ratingKey") : null;
         return new PlexMediaHistory
         {
-            Id = video.Attribute("ratingKey") is not null ? (int)video.Attribute("ratingKey") : null,
+            Id = id,
             Title = GetTitle(video),
             MediaType = GetMediaType(video),
             SeenAt = (long)video.Attribute("viewedAt"),
             User = GetUser(video, plexUsers),
-            ParentId = GetKey(video, "grandparentKey"),
+            ParentId = GetKey(video, "grandparentKey") ?? id ?? 0,
             ThumbnailId = GetKey(video, "grandparentArt"),
             Device = GetDevice(video, plexDevices)
         };
     }
 
-    private int GetKey(XElement video, string key)
+    private int? GetKey(XElement video, string key)
     {
         var text = ((string)video.Attribute(key) ?? "").Split('/').Last();
-        return int.Parse(string.IsNullOrEmpty(text) ? "0" : text);
+        return string.IsNullOrEmpty(text) ? null : int.Parse(text);
     }
 
     private string GetUser(XElement video, List<PlexUser> plexUsers)
