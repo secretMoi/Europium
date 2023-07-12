@@ -33,9 +33,9 @@ public class PlexService
 		return await _plexRepository.DeleteMedia(mediaId, fileId);
 	}
 
-	public async Task<Stream> GetThumbnail(PlexThumbnailParameters thumbnailParameters)
+	public async Task<Stream> GetThumbnail(PlexPictureParameters pictureParameters)
 	{
-		return await _plexRepository.GetThumbnail(thumbnailParameters);
+		return await _plexRepository.GetMediaPicture(pictureParameters);
 	}
 
 	public bool Restart()

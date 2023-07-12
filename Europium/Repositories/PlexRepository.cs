@@ -83,13 +83,15 @@ public class PlexRepository
 		return response.IsSuccessStatusCode;
 	}
 	
-	public async Task<Stream> GetThumbnail(PlexThumbnailParameters thumbnailParameters)
+	public async Task<Stream> GetMediaPicture(PlexPictureParameters pictureParameters)
 	{
+		var type = pictureParameters.IsArt ? "art" : "thumb";
+		var size = (pictureParameters.Size ?? pictureParameters.Size ?? 150).ToString();
 		var query = new Dictionary<string, string>
 		{
-			["width"] = (thumbnailParameters.Width ?? thumbnailParameters.Height ?? 150).ToString(),
-			["height"] = (thumbnailParameters.Height ?? thumbnailParameters.Width ?? 150).ToString(),
-			["url"] = $"/library/metadata/{thumbnailParameters.ParentId}/art/{thumbnailParameters.ThumbnailId}",
+			["width"] = size,
+			["height"] = size,
+			["url"] = $"/library/metadata/{pictureParameters.ParentId}/{type}/{pictureParameters.ThumbnailId}",
 		};
 		return await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/photo/:/transcode", query))!;
 	}
