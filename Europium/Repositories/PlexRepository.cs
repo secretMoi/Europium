@@ -14,6 +14,7 @@ public class PlexRepository
 	private readonly PlexSessionMapper _plexSessionMapper;
 	private readonly PlexHistoryMapper _plexHistoryMapper;
 	private readonly PlexUserMapper _plexUserMapper;
+	private readonly PlexDeviceMapper _plexDeviceMapper;
 	private readonly IWebHostEnvironment _env;
 	private static HttpClient? _httpClient;
 	private static ApiToMonitor? _plexApi;
@@ -21,7 +22,7 @@ public class PlexRepository
 
 	public PlexRepository(ApisToMonitorRepository monitorRepository, EuropiumContext context,
 		PlexMapper plexMapper, PlexSessionMapper plexSessionMapper, PlexHistoryMapper plexHistoryMapper,
-		PlexUserMapper plexUserMapper,
+		PlexUserMapper plexUserMapper, PlexDeviceMapper plexDeviceMapper,
 		IWebHostEnvironment env)
 	{
 		_context = context;
@@ -29,6 +30,7 @@ public class PlexRepository
 		_plexSessionMapper = plexSessionMapper;
 		_plexHistoryMapper = plexHistoryMapper;
 		_plexUserMapper = plexUserMapper;
+		_plexDeviceMapper = plexDeviceMapper;
 		_env = env;
 		
 		_plexApi ??= monitorRepository.GetApiByCode(ApiCode.PLEX);
@@ -115,10 +117,11 @@ public class PlexRepository
 
 		var getHistory = _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/status/sessions/history/all", query), GetCancellationToken());
 		var getUsers = GetUsers();
+		var getDevices = GetDevices();
 
-		await Task.WhenAll(getHistory!, getUsers);
+		await Task.WhenAll(getHistory!, getUsers, getDevices);
 
-		return await _plexHistoryMapper.MapMediasHistory(getHistory.Result, getUsers.Result);
+		return await _plexHistoryMapper.MapMediasHistory(getHistory.Result, getUsers.Result, getDevices.Result);
 	}
 
 	private async Task<List<PlexUser>> GetUsers()
@@ -126,6 +129,13 @@ public class PlexRepository
 		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/accounts"), GetCancellationToken())!;
 
 		return await _plexUserMapper.MapUsers(response);
+	}
+
+	private async Task<List<PlexDevice>> GetDevices()
+	{
+		var response = await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/devices"), GetCancellationToken())!;
+
+		return await _plexDeviceMapper.MapDevices(response);
 	}
 
 	private void AddToken(IDictionary<string, string> parameters)
