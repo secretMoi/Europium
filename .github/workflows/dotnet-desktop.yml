@@ -32,8 +32,8 @@ jobs:
              New-Item -Name ${{ vars.START_SERVER_BATCH_PATH }} -ItemType File
              Set-Content -Path ${{ vars.START_SERVER_BATCH_PATH }} -Value '${{ vars.START_SERVER_SCRIPT }}'
 
-      - name: Creater server scheduled task
-        run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc ONSTART /F
+      - name: Create server scheduled task
+        run: schtasks /create /tn "${{ vars.PROCESS_NAME }}" /tr "${{ vars.START_SERVER_BATCH_FULL_PATH }}" /sc ONLOGON /F
         
       - name: Launch server
         run: schtasks /run /tn "${{ vars.PROCESS_NAME }}"
