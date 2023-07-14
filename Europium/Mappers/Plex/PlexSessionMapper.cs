@@ -21,13 +21,13 @@ public class PlexSessionMapper
             IsPlaying = (string)videoElement.Element("Player")?.Attribute("state") == "playing",
             Progress = (int)videoElement.Attribute("viewOffset"),
             Duration = (int)videoElement.Attribute("duration"),
-            Year = (int)videoElement.Attribute("year"),
+            Year = (int?)videoElement.Attribute("year"),
             ThumbnailId = int.Parse(((string)videoElement.Attribute("thumb") ?? "").Split('/').Last()),
             UserName = (string)videoElement.Element("User")!.Attribute("title") ?? "",
-            IsVideoTranscoding = IsTranscoding((string)videoElement.Element("TranscodeSession")!.Attribute("videoDecision") ?? ""),
-            RemoteResolution = (string)videoElement.Element("Media")!.Attribute("videoResolution") ?? "",
-            VideoCodec = (string)videoElement.Element("Media")!.Attribute("videoCodec") ?? "",
-            IsAudioTranscoding = IsTranscoding((string)videoElement.Element("TranscodeSession")!.Attribute("audioDecision") ?? ""),
+            IsVideoTranscoding = IsTranscoding((string)videoElement.Element("TranscodeSession")?.Attribute("videoDecision") ?? ""),
+            RemoteResolution = (string)videoElement.Element("Media")?.Attribute("videoResolution") ?? "",
+            VideoCodec = (string)videoElement.Element("Media")?.Attribute("videoCodec") ?? "",
+            IsAudioTranscoding = IsTranscoding((string)videoElement.Element("TranscodeSession")?.Attribute("audioDecision") ?? ""),
             AudioTitle = (string)GetAudio(videoElement).Attribute("displayTitle") ?? "",
         };
     }

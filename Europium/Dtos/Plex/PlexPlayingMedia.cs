@@ -9,7 +9,7 @@ public class PlexPlayingMedia
     public bool IsRemote { get; set; }
     public int Progress { get; set; }
     public int Duration { get; set; }
-    public int Year { get; set; }
+    public int? Year { get; set; }
     public int ThumbnailId { get; set; }
     
     public string UserName { get; set; }
