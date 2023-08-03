@@ -53,5 +53,5 @@
       <None Remove="Ressources\tautulli.svg" />
       <None Remove="launcher.bat" />
     </ItemGroup>
-
+    
 </Project>

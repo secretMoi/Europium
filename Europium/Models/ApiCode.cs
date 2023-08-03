@@ -8,4 +8,5 @@ public static class ApiCode
 	public const string JACKETT = "JACKETT";
 	public const string QBITTORRENT = "QBITTORRENT";
 	public const string TAUTULLI = "TAUTULLI";
+	public const string FLARESOLVER = "FLARESOLVER";
 }

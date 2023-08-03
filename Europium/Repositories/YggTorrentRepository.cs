@@ -7,13 +7,15 @@ namespace Europium.Repositories;
 
 public class YggTorrentRepository
 {
+    private readonly FlareSolverRepository _flareSolverRepository;
     private static HttpClient? _httpClient;
     private static CookieContainer? _cookies;
     private static DateTime? _loginExpiration;
     private readonly YggTorrentConfig _yggTorrent;
 
-    public YggTorrentRepository(IOptions<AppConfig> options)
+    public YggTorrentRepository(IOptions<AppConfig> options, FlareSolverRepository flareSolverRepository)
     {
+        _flareSolverRepository = flareSolverRepository;
         _yggTorrent = options.Value.YggTorrent;
 
         _cookies ??= new CookieContainer();
@@ -89,6 +91,20 @@ public class YggTorrentRepository
             GetCancellationToken()
         )!;
 
+        // if (response.StatusCode == HttpStatusCode.Forbidden)
+        // {
+        //     var flareSolverResult = await _flareSolverRepository.ConnectToSite(_yggTorrent.Url, "ygg10");
+        //     _httpClient?.DefaultRequestHeaders.Remove("User-Agent");
+        //     _httpClient?.DefaultRequestHeaders.Remove("Cookie");
+        //     _httpClient?.DefaultRequestHeaders.Remove("Host");
+        //     _httpClient?.DefaultRequestHeaders.UserAgent.ParseAdd(flareSolverResult.userAgent);
+        //     //_httpClient?.DefaultRequestHeaders.Add("User-Agent", flareSolverResult.userAgent);
+        //     _httpClient?.DefaultRequestHeaders.Add("Cookie", flareSolverResult.cookie);
+        //     _httpClient?.DefaultRequestHeaders.Add("Host", "www3.yggtorrent.wtf");
+        //     await Login();
+        //     Console.WriteLine(flareSolverResult);
+        // }
+
         if (response.IsSuccessStatusCode)
             _loginExpiration = DateTime.Now.AddHours(2);
     }
@@ -104,6 +120,6 @@ public class YggTorrentRepository
 
     private CancellationToken GetCancellationToken()
     {
-        return new CancellationTokenSource(new TimeSpan(0, 0, 10)).Token;
+        return new CancellationTokenSource(new TimeSpan(0, 0, 100)).Token;
     }
 }

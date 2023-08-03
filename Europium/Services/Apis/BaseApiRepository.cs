@@ -6,7 +6,7 @@ public class BaseApiRepository
 
     protected BaseApiRepository()
     {
-        HttpClient ??= new HttpClient(new HttpClientHandler());
+        HttpClient = new HttpClient(new HttpClientHandler());
     }
     
     protected CancellationToken GetCancellationToken(int delay)

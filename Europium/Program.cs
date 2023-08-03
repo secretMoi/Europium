@@ -61,6 +61,8 @@ builder.Services.AddScoped<ApiUrlRepository>();
 
 builder.Services.AddScoped<SizeMapper>();
 
+builder.Services.AddScoped<FlareSolverRepository>();
+
 builder.Services.AddScoped<PlexMapper>();
 builder.Services.AddScoped<PlexDeviceMapper>();
 builder.Services.AddScoped<PlexUserMapper>();
