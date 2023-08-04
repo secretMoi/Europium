@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>annotations</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,8 +12,8 @@
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-          <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -21,41 +22,27 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Ressources\plex-icon.png" />
-      <None Remove="Ressources\radarr.png" />
-      <None Remove="Ressources\sonarr.png" />
-      <None Remove="Ressources\jackett.png" />
-      <None Remove="Ressources\qbittorrent.svg" />
-      <Content Include="Ressources\qbittorrent.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Ressources\qbittorrent.png" />
-      <None Remove="Ressources\plex-icon.svg" />
-      <None Remove="Ressources\sonarr.svg" />
-      <Content Include="Ressources\sonarr.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Ressources\radarr.svg" />
-      <Content Include="Ressources\radarr.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Ressources\plex.svg" />
-      <Content Include="Ressources\plex.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Ressources\jackett.svg" />
-      <Content Include="Ressources\jackett.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Include="Ressources\tautulli.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Ressources\tautulli.svg" />
-      <None Remove="launcher.bat" />
-      <None Remove="Ressources\flaresolver.svg" />
-      <Content Include="Ressources\flaresolver.svg">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <Content Include="Ressources\qbittorrent.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\sonarr.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\radarr.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\plex.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\jackett.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\tautulli.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Ressources\flaresolver.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
-    
+
 </Project>
