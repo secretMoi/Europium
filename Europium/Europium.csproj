@@ -52,6 +52,10 @@
       </Content>
       <None Remove="Ressources\tautulli.svg" />
       <None Remove="launcher.bat" />
+      <None Remove="Ressources\flaresolver.svg" />
+      <Content Include="Ressources\flaresolver.svg">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
     
 </Project>
