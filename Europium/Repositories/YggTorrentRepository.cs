@@ -75,7 +75,7 @@ public class YggTorrentRepository
         return new StreamContent(await responseFile.Content.ReadAsStreamAsync());
     }
 
-    private async Task Login()
+    private async Task Login(bool hasAlreadyTried = false)
     {
         if (_loginExpiration.HasValue && DateTime.Now <= _loginExpiration.Value) return;
 
@@ -91,19 +91,16 @@ public class YggTorrentRepository
             GetCancellationToken()
         )!;
 
-        // if (response.StatusCode == HttpStatusCode.Forbidden)
-        // {
-        //     var flareSolverResult = await _flareSolverRepository.ConnectToSite(_yggTorrent.Url, "ygg10");
-        //     _httpClient?.DefaultRequestHeaders.Remove("User-Agent");
-        //     _httpClient?.DefaultRequestHeaders.Remove("Cookie");
-        //     _httpClient?.DefaultRequestHeaders.Remove("Host");
-        //     _httpClient?.DefaultRequestHeaders.UserAgent.ParseAdd(flareSolverResult.userAgent);
-        //     //_httpClient?.DefaultRequestHeaders.Add("User-Agent", flareSolverResult.userAgent);
-        //     _httpClient?.DefaultRequestHeaders.Add("Cookie", flareSolverResult.cookie);
-        //     _httpClient?.DefaultRequestHeaders.Add("Host", "www3.yggtorrent.wtf");
-        //     await Login();
-        //     Console.WriteLine(flareSolverResult);
-        // }
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            var flareSolverResult = await _flareSolverRepository.ConnectToSite(_yggTorrent.Url, "ygg");
+            _httpClient?.DefaultRequestHeaders.Remove("User-Agent");
+            _httpClient?.DefaultRequestHeaders.Remove("Cookie");
+            _httpClient?.DefaultRequestHeaders.UserAgent.ParseAdd(flareSolverResult.userAgent);
+            _httpClient?.DefaultRequestHeaders.Add("Cookie", flareSolverResult.cookie);
+            if(!hasAlreadyTried)
+                await Login();
+        }
 
         if (response.IsSuccessStatusCode)
             _loginExpiration = DateTime.Now.AddHours(2);

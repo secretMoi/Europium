@@ -22,7 +22,7 @@ public class FlareSolverRepository : BaseApiRepository
             Url = url,
             Session = sessionName,
             ReturnOnlyCookies = true,
-            MaxTimeout = 60000
+            MaxTimeout = 20000
         };
 
         var response = await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
