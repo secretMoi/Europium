@@ -14,7 +14,7 @@ jobs:
     environment: Prod
     steps:
       - name: Close Server
-        run: taskkill /IM Europium.exe /F
+        run: START /wait taskkill /IM Europium.exe /F
         
       - name: Get last version from GitHub
         uses: actions/checkout@v3
