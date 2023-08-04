@@ -4,7 +4,7 @@ using Europium.Services.Apis.TheMovieDb.Models.Sonarr;
 
 namespace Europium.Repositories;
 
-public class SonarrRepository : CommonApiService
+public class SonarrRepository : CommonApiRepository
 {
     public SonarrRepository(ApisToMonitorRepository apisToMonitorRepository) : base(apisToMonitorRepository)
     {

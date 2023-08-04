@@ -1,4 +1,4 @@
-﻿namespace Europium.Services.Apis;
+﻿namespace Europium.Repositories;
 
 public class BaseApiRepository
 {

@@ -4,7 +4,7 @@ using Europium.Services.Apis.TheMovieDb.Models.Radarr;
 
 namespace Europium.Repositories;
 
-public class RadarrRepository : CommonApiService
+public class RadarrRepository : CommonApiRepository
 {
     public RadarrRepository(ApisToMonitorRepository apisToMonitorRepository) : base(apisToMonitorRepository)
     {

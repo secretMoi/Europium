@@ -1,6 +1,7 @@
 ﻿using Europium.Models;
 using Europium.Repositories;
 using Europium.Repositories.Models;
+using Europium.Services.Apis.FlareSolver;
 using Europium.Services.Apis.QBitTorrent;
 using Microsoft.Extensions.Options;
 
@@ -13,6 +14,7 @@ public class MonitorService
 	private readonly JackettService _jackettService;
 	private readonly QBitTorrentService _qBitTorrentService;
 	private readonly TautulliService _tautulliService;
+	private readonly FlareSolverService _flareSolverService;
 	private readonly PlexService _plexService;
 
 	private readonly ApisToMonitorRepository _monitorRepository;
@@ -21,7 +23,8 @@ public class MonitorService
 
 	public MonitorService(RadarrService radarrService, IOptions<AppConfig> optionsSnapshot,
 		ApisToMonitorRepository monitorRepository, SonarrService sonarrService, PlexService plexService,
-		JackettService jackettService, QBitTorrentService qBitTorrentService, TautulliService tautulliService)
+		JackettService jackettService, QBitTorrentService qBitTorrentService, TautulliService tautulliService,
+		FlareSolverService flareSolverService)
 	{
 		_radarrService = radarrService;
 		_monitorRepository = monitorRepository;
@@ -30,42 +33,23 @@ public class MonitorService
 		_jackettService = jackettService;
 		_qBitTorrentService = qBitTorrentService;
 		_tautulliService = tautulliService;
+		_flareSolverService = flareSolverService;
 		_appConfig = optionsSnapshot.Value;
 	}
 
 	public async Task<bool?> VerifySingleApiState(string code, string url)
 	{
-		if (ApiCode.RADARR.Equals(code))
+		return code switch
 		{
-			return await _radarrService.IsUpAsync(url);
-		}
-
-		if (ApiCode.SONARR.Equals(code))
-		{
-			return await _sonarrService.IsUpAsync(url);
-		}
-
-		if (ApiCode.JACKETT.Equals(code))
-		{
-			return await _jackettService.IsUpAsync(url);
-		}
-
-		if (ApiCode.PLEX.Equals(code))
-		{
-			return await _plexService.IsUpAsync(url);
-		}
-
-		if (ApiCode.QBITTORRENT.Equals(code))
-		{
-			return await _qBitTorrentService.IsUpAsync();
-		}
-
-		if (ApiCode.TAUTULLI.Equals(code))
-		{
-			return await _tautulliService.IsUpAsync(url);
-		}
-
-		return null;
+			ApiCode.RADARR => await _radarrService.IsUpAsync(url),
+			ApiCode.SONARR => await _sonarrService.IsUpAsync(url),
+			ApiCode.JACKETT => await _jackettService.IsUpAsync(url),
+			ApiCode.PLEX => await _plexService.IsUpAsync(url),
+			ApiCode.QBITTORRENT => await _qBitTorrentService.IsUpAsync(),
+			ApiCode.TAUTULLI => await _tautulliService.IsUpAsync(url),
+			ApiCode.FLARESOLVER => await _flareSolverService.IsUpAsync(url),
+			_ => null
+		};
 	}
 
 	public async Task<string?> GetApiLogoAsync(string imageName)

@@ -6,6 +6,7 @@ using Europium.Repositories;
 using Europium.Repositories.Ssh;
 using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
+using Europium.Services.Apis.FlareSolver;
 using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
 using Europium.Services.Apis.YggTorrent;
@@ -62,6 +63,7 @@ builder.Services.AddScoped<ApiUrlRepository>();
 builder.Services.AddScoped<SizeMapper>();
 
 builder.Services.AddScoped<FlareSolverRepository>();
+builder.Services.AddScoped<FlareSolverService>();
 
 builder.Services.AddScoped<PlexMapper>();
 builder.Services.AddScoped<PlexDeviceMapper>();
@@ -85,7 +87,7 @@ builder.Services.AddScoped<SshListFiles>();
 builder.Services.AddScoped<ListVolumesService>();
 builder.Services.AddScoped<LocalDrivesService>();
 
-builder.Services.AddScoped<CommonApiService>();
+builder.Services.AddScoped<CommonApiRepository>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
 builder.Services.AddScoped<QBitTorrentRepository>();

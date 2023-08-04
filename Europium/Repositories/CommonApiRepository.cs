@@ -1,16 +1,15 @@
 ﻿using System.Net;
-using Europium.Repositories;
 using Europium.Repositories.Models;
 
-namespace Europium.Services.Apis;
+namespace Europium.Repositories;
 
-public class CommonApiService : BaseApiRepository
+public class CommonApiRepository : BaseApiRepository
 {
 	protected readonly ApisToMonitorRepository _apisToMonitorRepository;
 
 	protected ApiToMonitor? _monitoredApi;
 
-	public CommonApiService(ApisToMonitorRepository apisToMonitorRepository)
+	public CommonApiRepository(ApisToMonitorRepository apisToMonitorRepository)
 	{
 		_apisToMonitorRepository = apisToMonitorRepository;
 		

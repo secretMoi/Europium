@@ -1,17 +1,28 @@
 using Europium.Dtos.FlareSolver;
 using Europium.Models;
-using Europium.Repositories.Models;
-using Europium.Services.Apis;
 
 namespace Europium.Repositories;
 
-public class FlareSolverRepository : BaseApiRepository
+public class FlareSolverRepository : CommonApiRepository
 {
-    private readonly ApiToMonitor? _monitoredApi;
 
-    public FlareSolverRepository(ApisToMonitorRepository apisToMonitorRepository)
+    public FlareSolverRepository(ApisToMonitorRepository apisToMonitorRepository) : base(apisToMonitorRepository)
     {
         _monitoredApi = apisToMonitorRepository.GetApiByCode(ApiCode.FLARESOLVER);
+    }
+    
+    public override async Task<bool> IsUpAsync(string url)
+    {
+        try
+        {
+            var response = await HttpClient.GetAsync(url, GetCancellationToken(5));
+		       
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public async Task<(string userAgent, string cookie)> ConnectToSite(string url, string sessionName)
@@ -25,7 +36,7 @@ public class FlareSolverRepository : BaseApiRepository
             MaxTimeout = 20000
         };
 
-        var response = await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
+        var response = await HttpClient.PostAsJsonAsync(Url, command);
         var result = await response.Content.ReadAsAsync<FlareSolverResponse>();
         
         return ExtractCookiesInfo(result);
@@ -38,7 +49,7 @@ public class FlareSolverRepository : BaseApiRepository
             Command = "sessions.list"
         };
 
-        var response = await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
+        var response = await HttpClient.PostAsJsonAsync(Url, command);
         var result = await response.Content.ReadAsAsync<SessionsList>();
         return result.Sessions;
     }
@@ -51,7 +62,7 @@ public class FlareSolverRepository : BaseApiRepository
             Session = sessionName
         };
 
-        await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
+        await HttpClient.PostAsJsonAsync(Url, command);
     }
 
     public async Task RemoveSession(string sessionName)
@@ -71,4 +82,6 @@ public class FlareSolverRepository : BaseApiRepository
 
         return (flareSolverResponse.Solution.UserAgent, $"{cookie?.Name}={cookie?.Value}");
     }
+
+    private string Url => _monitoredApi?.Url + "v1";
 }

@@ -99,7 +99,7 @@ public class YggTorrentRepository
             _httpClient?.DefaultRequestHeaders.UserAgent.ParseAdd(flareSolverResult.userAgent);
             _httpClient?.DefaultRequestHeaders.Add("Cookie", flareSolverResult.cookie);
             if(!hasAlreadyTried)
-                await Login();
+                await Login(true);
         }
 
         if (response.IsSuccessStatusCode)
