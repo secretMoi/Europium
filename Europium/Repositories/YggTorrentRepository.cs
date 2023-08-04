@@ -93,7 +93,7 @@ public class YggTorrentRepository
 
         if (response.StatusCode == HttpStatusCode.Forbidden)
         {
-            var flareSolverResult = await _flareSolverRepository.ConnectToSite(_yggTorrent.Url, "ygg");
+            var flareSolverResult = await _flareSolverRepository.ConnectToSite(_yggTorrent.Url, "ygg", "cf_clearance");
             _httpClient?.DefaultRequestHeaders.Remove("User-Agent");
             _httpClient?.DefaultRequestHeaders.Remove("Cookie");
             _httpClient?.DefaultRequestHeaders.UserAgent.ParseAdd(flareSolverResult.userAgent);

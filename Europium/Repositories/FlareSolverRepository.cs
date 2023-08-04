@@ -5,6 +5,7 @@ namespace Europium.Repositories;
 
 public class FlareSolverRepository : CommonApiRepository
 {
+    private readonly List<FlareSolverCookie> _cookies = new ();
 
     public FlareSolverRepository(ApisToMonitorRepository apisToMonitorRepository) : base(apisToMonitorRepository)
     {
@@ -25,24 +26,25 @@ public class FlareSolverRepository : CommonApiRepository
         }
     }
 
-    public async Task<(string userAgent, string cookie)> ConnectToSite(string url, string sessionName)
+    public async Task<(string userAgent, string cookie)> ConnectToSite(string url, string sessionName, string cookieName)
     {
-        var command = new FlareSolverCommand
+        var cookie = _cookies.FirstOrDefault(x => x.Name == cookieName);
+        if (cookie is not null)
         {
-            Command = "request.get",
-            Url = url,
-            Session = sessionName,
-            ReturnOnlyCookies = true,
-            MaxTimeout = 20000
-        };
+            if (cookie.Expiration < DateTime.Now)
+                return (cookie.UserAgent, cookie.Value);
+            
+            _cookies.Remove(cookie);
+        }
 
-        var response = await HttpClient.PostAsJsonAsync(Url, command);
+        await RemoveSessionIfExists(sessionName);
+        var response = await HttpClient.PostAsJsonAsync(Url, GetRequestCommand(url ,sessionName));
         var result = await response.Content.ReadAsAsync<FlareSolverResponse>();
         
-        return ExtractCookiesInfo(result);
+        return ExtractCookiesInfo(result, cookieName);
     }
     
-    public async Task<List<string>> ListSessions()
+    private async Task<List<string>> ListSessions()
     {
         var command = new FlareSolverCommand
         {
@@ -65,7 +67,7 @@ public class FlareSolverRepository : CommonApiRepository
         await HttpClient.PostAsJsonAsync(Url, command);
     }
 
-    public async Task RemoveSession(string sessionName)
+    private async Task RemoveSession(string sessionName)
     {
         var command = new FlareSolverCommand
         {
@@ -76,12 +78,54 @@ public class FlareSolverRepository : CommonApiRepository
         await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
     }
 
-    private (string userAgent, string cookie) ExtractCookiesInfo(FlareSolverResponse flareSolverResponse)
+    private FlareSolverCommand GetRequestCommand(string url, string sessionName)
     {
-        var cookie = flareSolverResponse.Solution.Cookies.FirstOrDefault(x => x.Name == "cf_clearance");
+        return new FlareSolverCommand
+        {
+            Command = "request.get",
+            Url = url,
+            Session = sessionName,
+            ReturnOnlyCookies = true,
+            MaxTimeout = 15000
+        };
+    }
 
-        return (flareSolverResponse.Solution.UserAgent, $"{cookie?.Name}={cookie?.Value}");
+    private async Task RemoveSessionIfExists(string sessionName)
+    {
+        var sessions = await ListSessions();
+        if (sessions.Any(x => x == sessionName))
+            await RemoveSession(sessionName);
+    }
+
+    private (string userAgent, string cookie) ExtractCookiesInfo(FlareSolverResponse flareSolverResponse, string cookieName)
+    {
+        var cookie = flareSolverResponse.Solution.Cookies.First(x => x.Name == cookieName);
+        
+        AddCookieToCache(flareSolverResponse.Solution.UserAgent, cookie.Name, cookie.Value, DateTime.Now.AddMinutes(29));
+
+        return (flareSolverResponse.Solution.UserAgent, $"{cookie.Name}={cookie.Value}");
+    }
+
+    private void AddCookieToCache(string userAgent, string name, string value, DateTime expiration)
+    {
+        _cookies.Add(new FlareSolverCookie(userAgent, name, value, expiration));
     }
 
     private string Url => _monitoredApi?.Url + "v1";
+}
+
+internal class FlareSolverCookie
+{
+    public string UserAgent { get; set; }
+    public string Name { get; set; }
+    public string Value { get; set; }
+    public DateTime Expiration { get; set; }
+
+    public FlareSolverCookie(string userAgent, string name, string value, DateTime expiration)
+    {
+        UserAgent = userAgent;
+        Name = name;
+        Value = value;
+        Expiration = expiration;
+    }
 }
