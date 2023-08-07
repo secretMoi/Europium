@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Europium.Models;
+using Europium.Repositories.FlareSolver;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 

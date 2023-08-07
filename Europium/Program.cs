@@ -3,6 +3,8 @@ using Europium.Mappers;
 using Europium.Mappers.Plex;
 using Europium.Models;
 using Europium.Repositories;
+using Europium.Repositories.FlareSolver;
+using Europium.Repositories.FlareSolver.Models;
 using Europium.Repositories.Ssh;
 using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
@@ -62,6 +64,7 @@ builder.Services.AddScoped<ApiUrlRepository>();
 
 builder.Services.AddScoped<SizeMapper>();
 
+builder.Services.AddScoped<FlareSolverCommandFactory>();
 builder.Services.AddScoped<FlareSolverRepository>();
 builder.Services.AddScoped<FlareSolverService>();
 

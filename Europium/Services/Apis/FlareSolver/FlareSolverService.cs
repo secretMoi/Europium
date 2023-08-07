@@ -1,4 +1,5 @@
 using Europium.Repositories;
+using Europium.Repositories.FlareSolver;
 
 namespace Europium.Services.Apis.FlareSolver;
 

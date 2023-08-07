@@ -1,14 +1,16 @@
-using Europium.Dtos.FlareSolver;
 using Europium.Models;
+using Europium.Repositories.FlareSolver.Models;
 
-namespace Europium.Repositories;
+namespace Europium.Repositories.FlareSolver;
 
 public class FlareSolverRepository : CommonApiRepository
 {
+    private readonly FlareSolverCommandFactory _flareSolverCommandFactory;
     private readonly List<FlareSolverCookie> _cookies = new ();
 
-    public FlareSolverRepository(ApisToMonitorRepository apisToMonitorRepository) : base(apisToMonitorRepository)
+    public FlareSolverRepository(ApisToMonitorRepository apisToMonitorRepository, FlareSolverCommandFactory flareSolverCommandFactory) : base(apisToMonitorRepository)
     {
+        _flareSolverCommandFactory = flareSolverCommandFactory;
         _monitoredApi = apisToMonitorRepository.GetApiByCode(ApiCode.FLARESOLVER);
     }
     
@@ -38,7 +40,7 @@ public class FlareSolverRepository : CommonApiRepository
         }
 
         await RemoveSessionIfExists(sessionName);
-        var response = await HttpClient.PostAsJsonAsync(Url, GetRequestCommand(url ,sessionName));
+        var response = await HttpClient.PostAsJsonAsync(Url, _flareSolverCommandFactory.GetRequestCommand(url ,sessionName));
         var result = await response.Content.ReadAsAsync<FlareSolverResponse>();
         
         return ExtractCookiesInfo(result, cookieName);
@@ -46,48 +48,19 @@ public class FlareSolverRepository : CommonApiRepository
     
     private async Task<List<string>> ListSessions()
     {
-        var command = new FlareSolverCommand
-        {
-            Command = "sessions.list"
-        };
-
-        var response = await HttpClient.PostAsJsonAsync(Url, command);
+        var response = await HttpClient.PostAsJsonAsync(Url, _flareSolverCommandFactory.GetSessionsListCommand());
         var result = await response.Content.ReadAsAsync<SessionsList>();
         return result.Sessions;
     }
 
     public async Task CreateSession(string sessionName)
     {
-        var command = new FlareSolverCommand
-        {
-            Command = "sessions.create",
-            Session = sessionName
-        };
-
-        await HttpClient.PostAsJsonAsync(Url, command);
+        await HttpClient.PostAsJsonAsync(Url, _flareSolverCommandFactory.GetCreateSessionCommand(sessionName));
     }
 
     private async Task RemoveSession(string sessionName)
     {
-        var command = new FlareSolverCommand
-        {
-            Command = "sessions.destroy",
-            Session = sessionName
-        };
-
-        await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, command);
-    }
-
-    private FlareSolverCommand GetRequestCommand(string url, string sessionName)
-    {
-        return new FlareSolverCommand
-        {
-            Command = "request.get",
-            Url = url,
-            Session = sessionName,
-            ReturnOnlyCookies = true,
-            MaxTimeout = 15000
-        };
+        await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, _flareSolverCommandFactory.GetRemoveSessionCommand(sessionName));
     }
 
     private async Task RemoveSessionIfExists(string sessionName)

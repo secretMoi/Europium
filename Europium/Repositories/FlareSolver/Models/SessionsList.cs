@@ -1,4 +1,4 @@
-namespace Europium.Dtos.FlareSolver;
+namespace Europium.Repositories.FlareSolver.Models;
 
 public class SessionsList
 {
