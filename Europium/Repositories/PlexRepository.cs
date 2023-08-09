@@ -93,7 +93,7 @@ public class PlexRepository
 			["height"] = size,
 			["url"] = $"/library/metadata/{pictureParameters.ParentId}/{type}/{pictureParameters.ThumbnailId}",
 		};
-		return await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/photo/:/transcode", query))!;
+		return await _httpClient?.GetStreamAsync(GetUri(_plexUrl + "/photo/:/transcode", query), GetCancellationToken())!;
 	}
 
 	public async Task<List<PlexPlayingMedia>> GetPlayingMedias()
