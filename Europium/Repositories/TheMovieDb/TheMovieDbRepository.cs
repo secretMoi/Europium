@@ -1,5 +1,4 @@
 ﻿using Europium.Models;
-using Europium.Services.Apis;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
