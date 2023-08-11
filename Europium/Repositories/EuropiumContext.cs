@@ -7,19 +7,20 @@ namespace Europium.Repositories;
 
 public class EuropiumContext : DbContext
 {
-	private readonly AppConfig AppConfig;
+	private readonly AppConfig _appConfig;
 
 	public EuropiumContext(IOptions<AppConfig> optionsSnapshot)
 	{
-		AppConfig = optionsSnapshot.Value;
+		_appConfig = optionsSnapshot.Value;
 	}
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		// connect to sql server with connection string from app settings
-		optionsBuilder.UseSqlServer(AppConfig.EuropiumDatabase);
+		optionsBuilder.UseSqlServer(_appConfig.EuropiumDatabase);
 	}
 
 	public DbSet<ApiToMonitor> ApisToMonitor { get; set; } = null!;
 	public DbSet<ApiUrl> ApiUrls { get; set; } = null!;
+	public DbSet<ConfigurationSetting> ConfigurationSettings { get; set; } = null!;
 }

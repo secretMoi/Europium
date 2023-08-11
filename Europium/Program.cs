@@ -1,8 +1,11 @@
+using System.Data;
+using System.Text;
 using Europium;
 using Europium.Mappers;
 using Europium.Mappers.Plex;
 using Europium.Models;
 using Europium.Repositories;
+using Europium.Repositories.Auth;
 using Europium.Repositories.FlareSolver;
 using Europium.Repositories.FlareSolver.Models;
 using Europium.Repositories.Ssh;
@@ -12,10 +15,13 @@ using Europium.Services.Apis.FlareSolver;
 using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
 using Europium.Services.Apis.YggTorrent;
+using Europium.Services.Auth;
 using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -30,7 +36,6 @@ builder.Services.AddControllers().AddNewtonsoftJson(s =>
 
 builder.Configuration.AddJsonFile("appconfig.json", false, true);
 
-// initialise le service de connexion à la bdd
 builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -48,7 +53,28 @@ builder.Services.AddCors(options =>
 		});
 });
 
-// Add services to the container.
+builder.Services.AddScoped<ConfigurationSettingRepository>();
+builder.Services.AddAuthentication(x =>
+{
+	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+	{
+		x.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidIssuer = builder.Configuration["AuthConfig:Issuer"],
+			ValidAudience = builder.Configuration["AuthConfig:Audience"],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthConfig:Key"] ?? throw new NoNullAllowedException()))
+		};
+	}
+);
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -59,6 +85,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.Configure<AppConfig>(builder.Configuration);
 
 builder.Services.AddSingleton<ConfigProgram>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ApisToMonitorRepository>();
 builder.Services.AddScoped<ApiUrlRepository>();
 
@@ -110,8 +137,6 @@ builder.Services.AddScoped<YggMapper>();
 builder.Services.AddScoped<YggTorrentSearcher>();
 builder.Services.AddScoped<YggTorrentService>();
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -134,6 +159,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
