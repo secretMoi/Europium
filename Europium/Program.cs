@@ -1,26 +1,19 @@
 using System.Data;
 using System.Text;
 using Europium;
+using Europium.Helpers.Extensions;
 using Europium.Mappers;
-using Europium.Mappers.Plex;
 using Europium.Models;
 using Europium.Repositories;
-using Europium.Repositories.Auth;
-using Europium.Repositories.FlareSolver;
-using Europium.Repositories.FlareSolver.Models;
 using Europium.Repositories.Ssh;
 using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
-using Europium.Services.Apis.FlareSolver;
-using Europium.Services.Apis.QBitTorrent;
 using Europium.Services.Apis.TheMovieDb;
-using Europium.Services.Apis.YggTorrent;
 using Europium.Services.Auth;
 using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -38,22 +31,8 @@ builder.Configuration.AddJsonFile("appconfig.json", false, true);
 
 builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
 
-const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.AddCors(options =>
-{
-	options.AddPolicy(name: myAllowSpecificOrigins,
-		policy  =>
-		{
-			policy.WithOrigins(
-				builder.Configuration.GetSection("AllowedUrls").Get<string[]>()
-				
-				);
-			policy.WithMethods("GET", "POST", "DELETE", "PUT");
-			policy.WithHeaders("authorization", "accept", "content-type", "origin");
-		});
-});
+builder.Services.SetupCors(builder.Configuration);
 
-builder.Services.AddScoped<ConfigurationSettingRepository>();
 builder.Services.AddAuthentication(x =>
 {
 	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -86,25 +65,13 @@ builder.Services.Configure<AppConfig>(builder.Configuration);
 
 builder.Services.AddSingleton<ConfigProgram>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<ApisToMonitorRepository>();
-builder.Services.AddScoped<ApiUrlRepository>();
 
 builder.Services.AddScoped<SizeMapper>();
 
-builder.Services.AddScoped<FlareSolverCommandFactory>();
-builder.Services.AddScoped<FlareSolverRepository>();
-builder.Services.AddScoped<FlareSolverService>();
-
-builder.Services.AddScoped<PlexMapper>();
-builder.Services.AddScoped<PlexDeviceMapper>();
-builder.Services.AddScoped<PlexUserMapper>();
-builder.Services.AddScoped<PlexSessionMapper>();
-builder.Services.AddScoped<PlexHistoryMapper>();
-builder.Services.AddScoped<PlexRepository>();
-builder.Services.AddScoped<PlexService>();
-
-builder.Services.AddScoped<TheMovieDbRepository>();
-builder.Services.AddScoped<TheMovieDbService>();
+builder.Services.AddDatabseRepositories();
+builder.Services.AddFlareSolver();
+builder.Services.AddPlex();
+builder.Services.AddTheMovieDatabase();
 
 builder.Services.AddScoped<MovieService>();
 
@@ -120,8 +87,8 @@ builder.Services.AddScoped<LocalDrivesService>();
 builder.Services.AddScoped<CommonApiRepository>();
 builder.Services.AddScoped<MonitorService>();
 builder.Services.AddScoped<JackettService>();
-builder.Services.AddScoped<QBitTorrentRepository>();
-builder.Services.AddScoped<QBitTorrentService>();
+builder.Services.AddQBitTorrent();
+
 
 builder.Services.AddScoped<RadarrRepository>();
 builder.Services.AddScoped<RadarrService>();
@@ -131,37 +98,8 @@ builder.Services.AddScoped<SonarrService>();
 
 builder.Services.AddScoped<TautulliService>();
 
-builder.Services.AddScoped<YggTorrentRepository>();
-builder.Services.AddScoped<YggTorrentRatioFetcher>();
-builder.Services.AddScoped<YggMapper>();
-builder.Services.AddScoped<YggTorrentSearcher>();
-builder.Services.AddScoped<YggTorrentService>();
+builder.Services.AddYgg();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
-
-//app.UseHttpsRedirection();
-
-var configProgram = app.Services.GetService<ConfigProgram>()!;
-app.UseStaticFiles(new StaticFileOptions
-{
-	FileProvider = new PhysicalFileProvider(
-		Path.Combine(builder.Environment.ContentRootPath, configProgram.RessourcesPath
-	)),
-	RequestPath = "/Ressources"
-});
-
-app.UseCors(myAllowSpecificOrigins);
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+app.SetupPipeline(builder);
