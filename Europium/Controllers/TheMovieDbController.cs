@@ -1,9 +1,11 @@
 ﻿using Europium.Services.Apis.TheMovieDb;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Europium.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class TheMovieDbController : ControllerBase
 {

@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
     {
         var token = await _authService.Login(login.Username, login.Password);
         if(token is not null)
-            return Ok(token);
+            return Ok(new { token });
 
         return Unauthorized();
     }

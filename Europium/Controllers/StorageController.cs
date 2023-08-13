@@ -1,12 +1,14 @@
 ﻿using Europium.Dtos;
 using Europium.Services.LocalDrives;
 using Europium.Services.Ssh;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using File = Europium.Dtos.File;
 
 namespace Europium.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class StorageController : ControllerBase
 {

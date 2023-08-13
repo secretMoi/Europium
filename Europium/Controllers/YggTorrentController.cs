@@ -1,10 +1,12 @@
 ﻿using Europium.Dtos;
 using Europium.Services.Apis.YggTorrent;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Europium.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class YggTorrentController : ControllerBase
 {
