@@ -1,24 +1,24 @@
-using System.Data;
-using System.Text;
 using Europium;
 using Europium.Helpers.Extensions;
 using Europium.Mappers;
 using Europium.Models;
 using Europium.Repositories;
-using Europium.Repositories.Ssh;
-using Europium.Repositories.TheMovieDb;
 using Europium.Services.Apis;
-using Europium.Services.Apis.TheMovieDb;
 using Europium.Services.Auth;
-using Europium.Services.LocalDrives;
-using Europium.Services.Ssh;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appconfig.json", false, true);
+
+builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
+
+const string policyName = "_myAllowSpecificOrigins";
+builder.Services.SetupCors(builder.Configuration, policyName);
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 builder.Services.AddControllers().AddNewtonsoftJson(s =>
 	{
@@ -27,79 +27,29 @@ builder.Services.AddControllers().AddNewtonsoftJson(s =>
 	}
 );
 
-builder.Configuration.AddJsonFile("appconfig.json", false, true);
-
-builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
-
-builder.Services.SetupCors(builder.Configuration);
-
-builder.Services.AddAuthentication(x =>
-{
-	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-	x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
-	{
-		x.TokenValidationParameters = new TokenValidationParameters
-		{
-			ValidateIssuer = true,
-			ValidateAudience = true,
-			ValidateLifetime = true,
-			ValidateIssuerSigningKey = true,
-			ValidIssuer = builder.Configuration["AuthConfig:Issuer"],
-			ValidAudience = builder.Configuration["AuthConfig:Audience"],
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthConfig:Key"] ?? throw new NoNullAllowedException()))
-		};
-	}
-);
-
-builder.Services.AddAuthorization();
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(Program));
-
-builder.Services.Configure<AppConfig>(builder.Configuration);
-
-builder.Services.AddSingleton<ConfigProgram>();
-builder.Services.AddScoped<AuthService>();
-
-builder.Services.AddScoped<SizeMapper>();
-
-builder.Services.AddDatabseRepositories();
-builder.Services.AddFlareSolver();
-builder.Services.AddPlex();
-builder.Services.AddTheMovieDatabase();
-
-builder.Services.AddScoped<MovieService>();
-
-builder.Services.AddScoped<SerieMapper>();
-builder.Services.AddScoped<SerieRepository>();
-builder.Services.AddScoped<SerieService>();
-
-builder.Services.AddScoped<SshNasRepository>();
-builder.Services.AddScoped<SshListFiles>();
-builder.Services.AddScoped<ListVolumesService>();
-builder.Services.AddScoped<LocalDrivesService>();
-
-builder.Services.AddScoped<CommonApiRepository>();
-builder.Services.AddScoped<MonitorService>();
-builder.Services.AddScoped<JackettService>();
-builder.Services.AddQBitTorrent();
-
-
-builder.Services.AddScoped<RadarrRepository>();
-builder.Services.AddScoped<RadarrService>();
-
-builder.Services.AddScoped<SonarrRepository>();
-builder.Services.AddScoped<SonarrService>();
-
-builder.Services.AddScoped<TautulliService>();
-
-builder.Services.AddYgg();
+builder.Services.AddEndpointsApiExplorer()
+	.AddSwaggerGen()
+	.AddAutoMapper(typeof(Program))
+	.Configure<AppConfig>(builder.Configuration)
+	.AddSingleton<ConfigProgram>()
+	.AddScoped<AuthService>()
+	.AddScoped<SizeMapper>()
+	.AddDatabseRepositories()
+	.AddFlareSolver()
+	.AddPlex()
+	.AddTheMovieDatabase()
+	.AddMedias()
+	.AddNas()
+	.AddDrives()
+	.AddScoped<CommonApiRepository>()
+	.AddScoped<MonitorService>()
+	.AddJackett()
+    .AddQBitTorrent()
+    .AddRadarr()
+    .AddSonarr()
+    .AddTautulli()
+    .AddYgg();
 
 var app = builder.Build();
 
-app.SetupPipeline(builder);
+app.SetupPipeline(builder, policyName);

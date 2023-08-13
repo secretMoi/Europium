@@ -63,17 +63,11 @@ public class MonitorService
 		string imageFormat;
 
 		if (imageName.EndsWith(".svg"))
-		{
 			imageFormat = "svg+xml";
-		}
 		else if (imageName.EndsWith(".png"))
-		{
 			imageFormat = "png";
-		}
 		else
-		{
 			throw new BadImageFormatException();
-		}
 
 		return $"data:image/{imageFormat};base64,{Convert.ToBase64String(byteImage)}";
 	}
