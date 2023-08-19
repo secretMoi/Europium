@@ -19,9 +19,26 @@ public class AuthController : ControllerBase
     {
         var token = await _authService.Login(login.Username, login.Password);
         if(token is not null)
-            return Ok(new { token });
+            return Ok(new { Token = token, RefreshToken = await _authService.GenerateRefreshToken(login.Username) });
 
         return Unauthorized();
+    }
+    
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+    {
+        var (principal, jwtToken) = _authService.ValidateRefreshToken(refreshToken);
+        if (principal == null)
+            return Unauthorized();
+
+        var newJwtToken = _authService.GenerateJwtToken(principal.Identity.Name);
+        var newRefreshToken = await _authService.GenerateRefreshToken(principal.Identity.Name);
+
+        return Ok(new
+        {
+            Token = newJwtToken,
+            RefreshToken = newRefreshToken
+        });
     }
     
     public class LoginModel

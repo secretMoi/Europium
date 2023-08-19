@@ -2,11 +2,13 @@
 using Europium.Repositories;
 using Europium.Repositories.Models;
 using Europium.Services.Apis;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Europium.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class MonitorController : ControllerBase

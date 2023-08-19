@@ -12,11 +12,13 @@ namespace Europium.Services.Auth;
 public class AuthService
 {
     private readonly ConfigurationSettingRepository _configurationSettingRepository;
+    private readonly RefreshTokenRepository _refreshTokenRepository;
     private readonly AuthConfig _authConfig;
 
-    public AuthService(ConfigurationSettingRepository configurationSettingRepository, IOptions<AppConfig> options)
+    public AuthService(ConfigurationSettingRepository configurationSettingRepository, IOptions<AppConfig> options, RefreshTokenRepository refreshTokenRepository)
     {
         _configurationSettingRepository = configurationSettingRepository;
+        _refreshTokenRepository = refreshTokenRepository;
         _authConfig = options.Value.AuthConfig;
     }
 
@@ -30,7 +32,7 @@ public class AuthService
 
         return null;
     }
-    
+
     public string GenerateJwtToken(string user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -44,9 +46,46 @@ public class AuthService
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _authConfig.Issuer,
-            Audience = _authConfig.Audience
+            Audience = _authConfig.Audience,
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+    
+    public async Task<string> GenerateRefreshToken(string userName)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_authConfig.Key);
+
+        var refreshToken = new RefreshToken
+        {
+            UserName = userName,
+            Token = GenerateJwtToken(userName),
+            ExpiryDate = DateTime.UtcNow.AddDays(7)
+        };
+
+        await _refreshTokenRepository.Add(refreshToken);
+
+        return refreshToken.Token;
+    }
+
+    public (ClaimsPrincipal, string) ValidateRefreshToken(string token)
+    {
+        var principal = new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authConfig.Key)),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = _authConfig.Audience,
+            ValidIssuer = _authConfig.Issuer,
+            ClockSkew = TimeSpan.Zero
+        }, out var validatedToken);
+
+        // Check if the token is a valid refresh token
+        if (!_refreshTokenRepository.CheckIfTokenIsValid(token))
+            return (null, null);
+
+        return (principal, ((JwtSecurityToken)validatedToken).RawData);
     }
 }

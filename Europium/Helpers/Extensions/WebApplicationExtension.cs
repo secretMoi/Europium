@@ -4,7 +4,7 @@ namespace Europium.Helpers.Extensions;
 
 public static class WebApplicationExtension
 {
-	public static void SetupPipeline(this WebApplication app, WebApplicationBuilder builder, string policyName)
+	public static void SetupPipeline(this WebApplication app, WebApplicationBuilder builder)
 	{
 		// Configure the HTTP request pipeline.
 		if (app.Environment.IsDevelopment())
@@ -24,7 +24,7 @@ public static class WebApplicationExtension
 			RequestPath = "/Ressources"
 		});
 
-		app.UseCors(policyName);
+		app.UseCors();
 
 		app.UseAuthentication();
 		app.UseAuthorization();

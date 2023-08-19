@@ -60,7 +60,7 @@ public class FlareSolverRepository : CommonApiRepository
 
     private async Task RemoveSession(string sessionName)
     {
-        await HttpClient.PostAsJsonAsync(_monitoredApi?.Url, _flareSolverCommandFactory.GetRemoveSessionCommand(sessionName));
+        await HttpClient.PostAsJsonAsync(Url, _flareSolverCommandFactory.GetRemoveSessionCommand(sessionName));
     }
 
     private async Task RemoveSessionIfExists(string sessionName)

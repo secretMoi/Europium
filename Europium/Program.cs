@@ -15,8 +15,7 @@ builder.Configuration.AddJsonFile("appconfig.json", false, true);
 
 builder.Services.AddDbContext<EuropiumContext>(opt => opt.UseSqlServer());
 
-const string policyName = "_myAllowSpecificOrigins";
-builder.Services.SetupCors(builder.Configuration, policyName);
+builder.Services.SetupCors(builder.Configuration);
 
 builder.Services.AddAuthentication(builder.Configuration);
 
@@ -34,7 +33,7 @@ builder.Services.AddEndpointsApiExplorer()
 	.AddSingleton<ConfigProgram>()
 	.AddScoped<AuthService>()
 	.AddScoped<SizeMapper>()
-	.AddDatabseRepositories()
+	.AddDatabaseRepositories()
 	.AddFlareSolver()
 	.AddPlex()
 	.AddTheMovieDatabase()
@@ -52,4 +51,4 @@ builder.Services.AddEndpointsApiExplorer()
 
 var app = builder.Build();
 
-app.SetupPipeline(builder, policyName);
+app.SetupPipeline(builder);

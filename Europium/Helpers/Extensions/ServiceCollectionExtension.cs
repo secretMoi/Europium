@@ -22,11 +22,11 @@ namespace Europium.Helpers.Extensions;
 
 public static class ServiceCollectionExtension
 {
-	public static void SetupCors(this IServiceCollection services, ConfigurationManager configuration, string policyName)
+	public static void SetupCors(this IServiceCollection services, ConfigurationManager configuration)
 	{
 		services.AddCors(options =>
 		{
-			options.AddPolicy(name: policyName,
+			options.AddDefaultPolicy(
 				policy  =>
 				{
 					policy.WithOrigins(
@@ -71,11 +71,12 @@ public static class ServiceCollectionExtension
 		return services;
 	}
 	
-	public static IServiceCollection AddDatabseRepositories(this IServiceCollection services)
+	public static IServiceCollection AddDatabaseRepositories(this IServiceCollection services)
 	{
 		services.AddScoped<ConfigurationSettingRepository>();
 		services.AddScoped<ApisToMonitorRepository>();
 		services.AddScoped<ApiUrlRepository>();
+		services.AddScoped<RefreshTokenRepository>();
 		
 		return services;
 	}

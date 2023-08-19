@@ -23,4 +23,5 @@ public class EuropiumContext : DbContext
 	public DbSet<ApiToMonitor> ApisToMonitor { get; set; } = null!;
 	public DbSet<ApiUrl> ApiUrls { get; set; } = null!;
 	public DbSet<ConfigurationSetting> ConfigurationSettings { get; set; } = null!;
+	public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 }
