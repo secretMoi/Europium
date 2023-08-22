@@ -43,7 +43,7 @@ public class AuthService
             {
                 new Claim(ClaimTypes.Name, user)
             }),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddMinutes(10),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _authConfig.Issuer,
             Audience = _authConfig.Audience,
@@ -54,16 +54,17 @@ public class AuthService
     
     public async Task<string> GenerateRefreshToken(string userName)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_authConfig.Key);
+        // var tokenHandler = new JwtSecurityTokenHandler();
+        // var key = Encoding.ASCII.GetBytes(_authConfig.Key);
 
         var refreshToken = new RefreshToken
         {
             UserName = userName,
             Token = GenerateJwtToken(userName),
-            ExpiryDate = DateTime.UtcNow.AddDays(7)
+            ExpiryDate = DateTime.UtcNow.AddMonths(1)
         };
 
+        await _refreshTokenRepository.Remove(userName);
         await _refreshTokenRepository.Add(refreshToken);
 
         return refreshToken.Token;

@@ -1,4 +1,5 @@
-﻿using Europium.Services.Auth;
+﻿using Europium.Dtos.Auth;
+using Europium.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Europium.Controllers;
@@ -25,11 +26,11 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshToken)
     {
-        var (principal, jwtToken) = _authService.ValidateRefreshToken(refreshToken);
+        var (principal, jwtToken) = _authService.ValidateRefreshToken(refreshToken.RefreshToken);
         if (principal == null)
-            return Unauthorized();
+            return BadRequest();
 
         var newJwtToken = _authService.GenerateJwtToken(principal.Identity.Name);
         var newRefreshToken = await _authService.GenerateRefreshToken(principal.Identity.Name);

@@ -44,6 +44,7 @@
         <Content Include="Ressources\flaresolver.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+
     </ItemGroup>
 
 
