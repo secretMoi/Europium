@@ -14,7 +14,7 @@ public class SonarrRepository : CommonApiRepository
     
     public async Task<SonarrInformation?> GetSerieByTvdbIdAsync(int tvdbId)
     {
-        var response = await HttpClient.GetAsync(_monitoredApi?.Url + "api/series/lookup?term=tvdb:" + tvdbId, GetCancellationToken(5));
+        var response = await HttpClient.GetAsync(_monitoredApi?.Url + "api/v3/series/lookup?term=tvdb:" + tvdbId, GetCancellationToken(5));
 
         var sonarrInformation = (await response.Content.ReadAsAsync<SonarrInformation[]>(GetCancellationToken(5))).FirstOrDefault();
 
